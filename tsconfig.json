@@ -1,0 +1,12 @@
+{
+	"extends": "./tsconfig.build.json",
+	"include": ["src/**/*.ts", "test/**/*.ts", "test/**/*.mjs"],
+	"exclude": ["node_modules/**"],
+	"compilerOptions": {
+		"rootDir": ".",
+		"noEmit": true,
+		"allowJs": true,
+		"checkJs": false,
+		"types": ["node"]
+	}
+}
