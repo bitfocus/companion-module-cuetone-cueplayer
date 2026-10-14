@@ -57,3 +57,9 @@ Control CuePlayer playback, background audio mode, and sound-effect pads over it
 - **피해야 할 것:** 의존성이나 최소 버전 숫자만 낮춰 호환성을 주장하는 것. 하위 버전 지원은 코드·빌드·런타임 검증이 필요합니다.
 
 현재로서는 **base 하향보다 API 지원 앱의 공개와 실앱 연동 검증을 먼저 완료하는 것이 리뷰어의 승인 판단에 더 직접적으로 도움이 됩니다.**
+
+## 제출 기록
+
+- 2026-10-14 큐플레이어 맥 1.1.21 · 윈도우 1.0.24 배포 뒤 제출 → https://developer.bitfocus.io/create-repository/17 (Pending). GitHub lazalus 로 로그인, 포털 이용약관 동의.
+- 승인되면 GitHub 초대 수락 → 이 저장소 push → `v0.1.0` 태그 → 포털 Submit Version.
+- 남은 일: 효과음 칸이 큐플레이어는 10칸인데 모듈 동작·프리셋은 1~9 → 10번까지로 늘리기. 실물 Companion 으로 한 번 시험.
