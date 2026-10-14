@@ -64,6 +64,17 @@ describe('status → variables', () => {
 		})
 	})
 
+	it('crossfade: shows the ending song until it is over (3·2·1)', () => {
+		const v = statusToVariables({ ...playing, current: { id: 't2', title: '축가', duration: 200 }, remaining: 198,
+			ending: { id: 't1', title: '신랑 입장', remaining: 2.3 } })
+		expect(v.current_title).toBe('신랑 입장')
+		expect(v.remaining).toBe('0:03')
+		expect(v.remaining_seconds).toBe(3)
+		expect(Checks.remainingBelow({ ...playing, ending: { title: '신랑 입장', remaining: 2.3 } }, 5)).toBe(true)
+		const after = statusToVariables({ ...playing, current: { id: 't2', title: '축가', duration: 200 }, remaining: 198, ending: null })
+		expect(after.current_title).toBe('축가')
+	})
+
 	it('stopped with a cued song', () => {
 		const v = statusToVariables({
 			...playing,

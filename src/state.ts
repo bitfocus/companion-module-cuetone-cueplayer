@@ -48,9 +48,11 @@ export function statusToVariables(
 	const hasCurrent = !!status.current
 	vars.state = state
 	vars.state_label = STATE_LABEL[state] ?? state
-	vars.current_title = status.current?.title ?? ''
+	// 겹치는 동안은 끝나 가는 앞 곡의 제목·남은 시간 (다음 곡이 이미 시작했어도 3·2·1 을 끝까지)
+	const ending = status.ending && status.ending.remaining > 0 ? status.ending : null
+	vars.current_title = ending?.title ?? status.current?.title ?? ''
 	vars.current_playlist = status.current?.playlist ?? ''
-	const remaining = hasCurrent ? (status.remaining ?? 0) : 0
+	const remaining = ending ? ending.remaining : hasCurrent ? (status.remaining ?? 0) : 0
 	vars.remaining = hasCurrent ? formatTime(remaining, 'ceil') : '0:00'
 	vars.remaining_seconds = hasCurrent ? Math.max(0, Math.ceil(remaining - 1e-6)) : 0
 	vars.elapsed = hasCurrent ? formatTime(status.position ?? 0) : '0:00'
@@ -79,7 +81,8 @@ export const Checks = {
 		!!s?.pads?.some((p) => p.slot === slot && p.playing && !p.empty),
 	/** Only while sound is actually running (playing or fading) — a paused song is not "about to end". */
 	remainingBelow: (s: CuePlayerStatus | null, seconds: number): boolean =>
-		!!s && !!s.current && (s.state === 'playing' || s.state === 'fading') && (s.remaining ?? Infinity) < seconds,
+		!!s && !!s.current && (s.state === 'playing' || s.state === 'fading') &&
+		(s.ending && s.ending.remaining > 0 ? s.ending.remaining : (s.remaining ?? Infinity)) < seconds,
 }
 
 /** What the client-side play/pause toggle should send for this status. */

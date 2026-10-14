@@ -32,6 +32,8 @@ export interface CuePlayerStatus {
 	next?: TrackRef | null
 	position?: number
 	remaining?: number
+	/** 겹치기 중 끝나 가는 앞 곡 (CuePlayer 1.1.22~). 있으면 남은 시간은 이 곡 기준 — 3·2·1 을 끝까지 */
+	ending?: { id?: string; title: string; remaining: number } | null
 	background?: boolean
 	stopAfter?: boolean
 	locked?: boolean
