@@ -40,7 +40,7 @@ const MODE_CHOICES: DropdownChoice<OnOffToggle>[] = [
 	{ id: 'off', label: '끄기 (off)' },
 ]
 
-export const PAD_CHOICES: DropdownChoice<number>[] = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({
+export const PAD_CHOICES: DropdownChoice<number>[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => ({
 	id: n,
 	label: `${n}번 칸`,
 }))
@@ -137,9 +137,9 @@ export function actionDefinitions(host: ActionHost): CompanionActionDefinitions<
 		},
 		pause: simple('일시정지 · Pause', '이미 멈춰 있으면 그대로', Commands.pause),
 		resume: simple('이어서 재생 · Resume', '이미 재생 중이면 그대로', Commands.resume),
-		stop: simple('멈춤 · Stop', '바로 멈추고 곡 시작 자리로', Commands.stop),
+		stop: simple('즉시 정지 · Stop', '바로 멈추고 곡을 끝낸 것으로 — 다음 곡을 처음 자리에 대기 (페이드 정지와 같은 결과)', Commands.stop),
 		restart: simple('처음부터 · Restart', '지금 곡을 처음부터', Commands.restart),
-		fadeout: simple('페이드아웃 · Fade out', '설정한 시간 동안 줄이고 멈춤 (다시 눌러도 취소 안 함)', Commands.fadeout),
+		fadeout: simple('페이드 정지 · Fade out', '설정한 시간 동안 줄이고 멈춘 뒤 다음 곡 대기 (다시 눌러도 취소 안 함)', Commands.fadeout),
 		next: simple('다음 곡 · Next', '앱 ⏭ 과 같음 (멈춰 있으면 올려 두기만)', Commands.next),
 		previous: simple('이전 곡 · Previous', '앱 ⏮ 과 같음 (멈춰 있으면 올려 두기만)', Commands.previous),
 		seek: {
@@ -158,8 +158,8 @@ export function actionDefinitions(host: ActionHost): CompanionActionDefinitions<
 				await host.send(Commands.skip(by), '건너뛰기')
 			},
 		},
-		background: onOff('배경으로 줄이기 · Background', (s) => s.background, Commands.background),
-		stop_after: onOff('끝나면 멈춤 · Stop after current', (s) => s.stopAfter, Commands.stopAfter),
+		background: onOff('보이스오버 · Voice-over', (s) => s.background, Commands.background),
+		stop_after: onOff('끝나면 정지 · Stop after current', (s) => s.stopAfter, Commands.stopAfter),
 		pad_trigger: {
 			name: '효과음 울리기 · Pad trigger',
 			options: [{ id: 'slot', type: 'dropdown', label: '칸', choices: PAD_CHOICES, default: 1 }],

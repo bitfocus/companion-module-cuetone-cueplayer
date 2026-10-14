@@ -65,29 +65,29 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 		],
 	}
 	p.fadeout = key(
-		'페이드아웃',
-		'페이드\n아웃',
+		'페이드 정지',
+		'페이드\n정지',
 		[{ actionId: 'fadeout', options: {} }],
 		[{ feedbackId: 'fading', options: {}, style: { bgcolor: Colors.purple, color: Colors.white } }],
 	)
 	p.next = key('다음 곡 (다음 곡 제목)', `다음\n${V('next_title')}`, [{ actionId: 'next', options: {} }], [], {
 		size: '14',
 	})
-	p.stop = key('멈춤', '멈춤', [{ actionId: 'stop', options: {} }])
+	p.stop = key('즉시 정지', '즉시\n정지', [{ actionId: 'stop', options: {} }])
 	p.restart = key('처음부터', '처음\n부터', [{ actionId: 'restart', options: {} }])
 	p.background = key(
-		'배경으로 줄이기 (켜고 끄기)',
-		'배경',
+		'보이스오버 (켜고 끄기)',
+		'보이스\n오버',
 		[{ actionId: 'background', options: { mode: 'toggle' } }],
 		[{ feedbackId: 'background', options: {}, style: { bgcolor: Colors.blue, color: Colors.white } }],
 	)
 	p.stop_after = key(
-		'끝나면 멈춤 (켜고 끄기)',
-		'끝나면\n멈춤',
+		'끝나면 정지 (켜고 끄기)',
+		'끝나면\n정지',
 		[{ actionId: 'stop_after', options: { mode: 'toggle' } }],
 		[{ feedbackId: 'stop_after', options: {}, style: { bgcolor: Colors.teal, color: Colors.white } }],
 	)
-	for (let n = 1; n <= 9; n++) {
+	for (let n = 1; n <= 10; n++) {
 		p[`pad_${n}`] = {
 			...key(
 				`효과음 ${n}`,
@@ -169,13 +169,13 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 			id: 'page15',
 			name: '스트림덱 15키 한 장 · 15-key page',
 			description:
-				'5×3 그대로 놓으면 돼요. 1줄 재생/일시정지·페이드아웃·다음·멈춤·처음부터, 2줄 배경·끝나면 멈춤·효과음 1~3, 3줄 효과음 4~8. 효과음 9번은 아래 "효과음" 묶음에 있어요 (16개라 한 장에 다 안 들어가요).',
+				'5×3 그대로 놓으면 돼요. 1줄 재생/일시정지·페이드 정지·다음·즉시 정지·처음부터, 2줄 보이스오버·끝나면 정지·효과음 1~3, 3줄 효과음 4~8. 효과음 9·10번은 아래 "효과음" 묶음에 있어요 (17개라 한 장에 다 안 들어가요).',
 			definitions: [
 				{ id: 'row1', type: 'simple', name: '1줄 · 곡', presets: ['play_pause', 'fadeout', 'next', 'stop', 'restart'] },
 				{
 					id: 'row2',
 					type: 'simple',
-					name: '2줄 · 배경 · 효과음',
+					name: '2줄 · 보이스오버 · 효과음',
 					presets: ['background', 'stop_after', 'pad_1', 'pad_2', 'pad_3'],
 				},
 				{ id: 'row3', type: 'simple', name: '3줄 · 효과음', presets: ['pad_4', 'pad_5', 'pad_6', 'pad_7', 'pad_8'] },
@@ -188,8 +188,8 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 				{
 					id: 'pads_all',
 					type: 'simple',
-					name: '효과음 1~9 · 전부 멈춤',
-					presets: ['pad_1', 'pad_2', 'pad_3', 'pad_4', 'pad_5', 'pad_6', 'pad_7', 'pad_8', 'pad_9', 'pads_stop'],
+					name: '효과음 1~10 · 전부 멈춤',
+					presets: ['pad_1', 'pad_2', 'pad_3', 'pad_4', 'pad_5', 'pad_6', 'pad_7', 'pad_8', 'pad_9', 'pad_10', 'pads_stop'],
 				},
 			],
 		},

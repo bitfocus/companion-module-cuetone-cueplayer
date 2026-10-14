@@ -1,7 +1,7 @@
 import type { CompanionVariableDefinitions } from '@companion-module/base'
 
 type PadNameVariables = {
-	[K in `pad_${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}_name`]: string
+	[K in `pad_${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10}_name`]: string
 }
 
 export type VariablesSchema = {
@@ -32,6 +32,6 @@ export function variableDefinitions(): CompanionVariableDefinitions<VariablesSch
 		next_title: { name: '다음에 이어질 곡 제목' },
 		cued_title: { name: '올려 둔(대기) 곡 제목' },
 	}
-	for (let n = 1; n <= 9; n++) defs[`pad_${n}_name`] = { name: `효과음 ${n}번 칸 이름` }
+	for (let n = 1; n <= 10; n++) defs[`pad_${n}_name`] = { name: `효과음 ${n}번 칸 이름` }
 	return defs as CompanionVariableDefinitions<VariablesSchema>
 }

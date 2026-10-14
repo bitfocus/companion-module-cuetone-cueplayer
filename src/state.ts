@@ -1,7 +1,7 @@
 import type { CuePlayerStatus } from './types.js'
 import type { VariablesSchema } from './variables.js'
 
-export const PAD_SLOTS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const
+export const PAD_SLOTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 
 const STATE_LABEL: Record<string, string> = {
 	playing: '재생 중',

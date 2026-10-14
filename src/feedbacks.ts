@@ -86,14 +86,14 @@ export function feedbackDefinitions(
 		fading: simple('페이드 중 · Fading', '페이드아웃 중일 때', Checks.fading, Colors.purple),
 		stopped: simple('멈춤 (곡 없음) · Stopped', '올라온 곡이 없을 때', Checks.stopped, Colors.grey),
 		background: simple(
-			'배경으로 줄이기 켜짐 · Background on',
-			'배경으로 줄이기가 켜져 있을 때',
+			'보이스오버 켜짐 · Voice-over on',
+			'보이스오버가 켜져 있을 때 (음악을 작게 깔아 둠)',
 			Checks.background,
 			Colors.blue,
 		),
 		stop_after: simple(
-			'끝나면 멈춤 켜짐 · Stop-after on',
-			'지금 곡이 끝나면 멈춤이 켜져 있을 때',
+			'끝나면 정지 켜짐 · Stop-after on',
+			'지금 곡이 끝나면 정지가 켜져 있을 때',
 			Checks.stopAfter,
 			Colors.teal,
 		),
