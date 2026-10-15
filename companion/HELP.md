@@ -29,23 +29,23 @@
 
 ### 변수 (Variables)
 
-`$(cueplayer:state)` `state_label` `current_title` `current_playlist` `remaining`(m:ss) `remaining_seconds` `elapsed` `next_title` `cued_title` `pad_1_name` … `pad_9_name`
+`$(cueplayer:state)` `state_label` `current_title` `current_playlist` `remaining`(m:ss) `remaining_seconds` `elapsed` `next_title` `cued_title` `pad_1_name` … `pad_10_name`
 (앞의 `cueplayer` 는 연결 이름에 따라 바뀌어요.)
 
 ### 프리셋 — 스트림덱 15키 한 장
 
-|                                |             |                     |          |          |
-| ------------------------------ | ----------- | ------------------- | -------- | -------- |
+|                                |             |                     |           |          |
+| ------------------------------ | ----------- | ------------------- | --------- | -------- |
 | 재생/일시정지 (상태·남은 시간) | 페이드 정지 | 다음 (다음 곡 제목) | 즉시 정지 | 처음부터 |
-| 보이스오버                     | 끝나면 정지 | 효과음 1            | 효과음 2 | 효과음 3 |
-| 효과음 4                       | 효과음 5    | 효과음 6            | 효과음 7 | 효과음 8 |
+| 보이스오버                     | 끝나면 정지 | 효과음 1            | 효과음 2  | 효과음 3 |
+| 효과음 4                       | 효과음 5    | 효과음 6            | 효과음 7  | 효과음 8 |
 
 재생 키: 곡 끝에서 다음 곡과 겹치는 동안에도 끝나 가는 곡의 남은 시간을 끝까지 보여 줘요. 재생 중 초록 → 끝나기 30초 전 주황 → 10초 전 빨강, 일시정지 노랑, 페이드 보라, 끊기면 회색. 효과음 키는 칸 이름을 보여 주고 울리는 동안 주황.
 효과음 9·10번·효과음 전부 멈춤·이전 곡·±10초·지금 곡 표시는 "효과음", "더 보기" 묶음에 있어요.
 
 ### 안 될 때
 
-- **연결이 거부됐어요**: 큐플레이어가 꺼져 있거나 원격 조작이 꺼져 있어요(행사 중 화면 위 '원격' 표시를 누르면 꺼져요). 다시 켜면 버튼이 저절로 돌아와요.
+- **연결이 거부됐어요**: 큐플레이어가 꺼져 있거나 원격 조작이 꺼져 있어요(행사 중 화면 위 초록 '원격' 아이콘을 누르고 [원격 끄기]를 누르면 꺼져요). 다시 켜면 버튼이 저절로 돌아와요.
 - **토큰이 없거나 틀려요**: 큐플레이어 설정의 토큰을 다시 복사해 넣어요(새로 만들면 예전 토큰은 안 돼요).
 - **이 컴퓨터에서만 받도록 되어 있어요**: 큐플레이어 받을 곳을 '같은 네트워크'로 바꿔요.
 - 믹서 모듈과 한 버튼에 묶을 수는 있지만, 두 기기 사이의 순서·완료는 보장되지 않아요.
@@ -60,4 +60,4 @@ Controls CueTone **CuePlayer** (event music player) through its HTTP remote API 
 2. Same computer: keep host `127.0.0.1`, port `53100`, no token needed.
 3. Another computer: set CuePlayer to accept the same network, then enter that computer's IP and the **token** shown in CuePlayer (sent as `Authorization: Bearer`).
 
-Actions cover go (pick a song from the playlist dropdown), play/pause toggle, pause, resume, stop, restart, fade out, next, previous, seek, skip ±s, background and stop-after (on/off/toggle), pads 1–9 trigger/stop and stop all. Feedbacks show playing, paused, fading, stopped, background, stop-after, pad playing, announcing, remaining below N s, connected/disconnected and output problems; when the connection drops every state feedback turns off. A ready 15-key Stream Deck page is included in the presets.
+Actions cover go (pick a song from the playlist dropdown), play/pause toggle, pause, resume, stop, restart, fade stop, next, previous, seek, skip ±s, voice-over and stop-after-this-track (on/off/toggle), sound pads 1–10 trigger/stop and stop all. Feedbacks show playing, paused, fading, stopped, voice-over, stop-after-this-track, pad playing, announcing, remaining below N s, connected/disconnected and output problems; when the connection drops every state feedback turns off. A ready 15-key Stream Deck page is included in the presets.
