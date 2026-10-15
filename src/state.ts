@@ -81,7 +81,9 @@ export const Checks = {
 		!!s?.pads?.some((p) => p.slot === slot && p.playing && !p.empty),
 	/** Only while sound is actually running (playing or fading) — a paused song is not "about to end". */
 	remainingBelow: (s: CuePlayerStatus | null, seconds: number): boolean =>
-		!!s && !!s.current && (s.state === 'playing' || s.state === 'fading') &&
+		!!s &&
+		!!s.current &&
+		(s.state === 'playing' || s.state === 'fading') &&
 		(s.ending && s.ending.remaining > 0 ? s.ending.remaining : (s.remaining ?? Infinity)) < seconds,
 }
 

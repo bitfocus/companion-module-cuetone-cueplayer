@@ -137,9 +137,17 @@ export function actionDefinitions(host: ActionHost): CompanionActionDefinitions<
 		},
 		pause: simple('일시정지 · Pause', '이미 멈춰 있으면 그대로', Commands.pause),
 		resume: simple('이어서 재생 · Resume', '이미 재생 중이면 그대로', Commands.resume),
-		stop: simple('즉시 정지 · Stop', '바로 멈추고 그 곡 처음 자리에 대기 (페이드 정지와 같은 결과, CuePlayer 1.1.22~)', Commands.stop),
+		stop: simple(
+			'즉시 정지 · Stop',
+			'바로 멈추고 그 곡 처음 자리에 대기 (페이드 정지와 같은 결과, CuePlayer 1.1.22~)',
+			Commands.stop,
+		),
 		restart: simple('처음부터 · Restart', '지금 곡을 처음부터', Commands.restart),
-		fadeout: simple('페이드 정지 · Fade out', '설정한 시간 동안 줄이고 멈춘 뒤 그 곡 처음 자리에 대기 (다시 눌러도 취소 안 함)', Commands.fadeout),
+		fadeout: simple(
+			'페이드 정지 · Fade out',
+			'설정한 시간 동안 줄이고 멈춘 뒤 그 곡 처음 자리에 대기 (다시 눌러도 취소 안 함)',
+			Commands.fadeout,
+		),
 		next: simple('다음 곡 · Next', '앱 ⏭ 과 같음 (멈춰 있으면 올려 두기만)', Commands.next),
 		previous: simple('이전 곡 · Previous', '앱 ⏮ 과 같음 (멈춰 있으면 올려 두기만)', Commands.previous),
 		seek: {

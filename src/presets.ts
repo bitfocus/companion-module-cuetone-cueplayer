@@ -5,6 +5,7 @@ import type {
 } from '@companion-module/base'
 import type { ModuleSchema } from './main.js'
 import { Colors } from './feedbacks.js'
+import { Icons } from './icons.js'
 
 type Presets = CompanionPresetDefinitions<ModuleSchema>
 type Preset = NonNullable<Presets[string]> & { type: 'simple' }
@@ -17,6 +18,15 @@ const V = (name: string): string => `$(cueplayer:${name})`
 function style(text: string, over: Partial<CompanionButtonStyleProps> = {}): CompanionButtonStyleProps {
 	return { text, size: 'auto', color: Colors.white, bgcolor: Colors.black, show_topbar: false, ...over }
 }
+
+/** 아이콘 버튼: 위쪽 가운데 아이콘(72×72 PNG), 아래쪽 글자. 바탕은 앱 단추와 같은 짙은 회색 */
+const icon = (png: string): Partial<CompanionButtonStyleProps> => ({
+	png64: png,
+	pngalignment: 'center:top',
+	alignment: 'center:bottom',
+	size: '14',
+	bgcolor: Colors.key,
+})
 
 /** Grey, whatever else is lit — added last so it wins: never a stale green when the link is down */
 const offline = (text?: string): Feedbacks[number] => ({
@@ -48,11 +58,11 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 		type: 'simple',
 		name: '재생/일시정지 (남은 시간)',
 		keywords: ['play', 'pause', 'remaining', '재생'],
-		style: style(`${V('state_label')}\n${V('remaining')}`),
-		previewStyle: { text: '재생/일시정지\n1:23' },
+		style: style(V('remaining'), { ...icon(Icons.play), size: '18' }),
+		previewStyle: { text: '1:23', ...icon(Icons.play), size: '18' },
 		steps: [{ down: [{ actionId: 'play_pause', options: {} }], up: [] }],
 		feedbacks: [
-			{ feedbackId: 'playing', options: {}, style: { bgcolor: Colors.green, color: Colors.white } },
+			{ feedbackId: 'playing', options: {}, style: { bgcolor: Colors.green, color: Colors.white, png64: Icons.pause } },
 			{
 				feedbackId: 'remaining_below',
 				options: { seconds: 30 },
@@ -66,63 +76,74 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 	}
 	p.fadeout = key(
 		'페이드 정지',
-		'페이드\n정지',
+		'페이드',
 		[{ actionId: 'fadeout', options: {} }],
 		[{ feedbackId: 'fading', options: {}, style: { bgcolor: Colors.purple, color: Colors.white } }],
+		icon(Icons.fade),
 	)
-	p.next = key('다음 곡 (다음 곡 제목)', `다음\n${V('next_title')}`, [{ actionId: 'next', options: {} }], [], {
-		size: '14',
-	})
-	p.stop = key('즉시 정지', '즉시\n정지', [{ actionId: 'stop', options: {} }])
-	p.restart = key('처음부터', '처음\n부터', [{ actionId: 'restart', options: {} }])
+	p.next = key('다음 곡 (다음 곡 제목)', V('next_title'), [{ actionId: 'next', options: {} }], [], icon(Icons.next))
+	p.stop = key('즉시 정지', '즉시 정지', [{ actionId: 'stop', options: {} }], [], icon(Icons.stop))
+	p.restart = key('처음부터', '처음부터', [{ actionId: 'restart', options: {} }], [], icon(Icons.restart))
 	p.background = key(
 		'보이스오버 (켜고 끄기)',
-		'보이스\n오버',
+		'보이스오버',
 		[{ actionId: 'background', options: { mode: 'toggle' } }],
-		[{ feedbackId: 'background', options: {}, style: { bgcolor: Colors.blue, color: Colors.white } }],
+		[{ feedbackId: 'background', options: {}, style: { bgcolor: Colors.brand, color: Colors.white } }],
+		icon(Icons.voiceover),
 	)
 	p.stop_after = key(
 		'끝나면 정지 (켜고 끄기)',
-		'끝나면\n정지',
+		'끝나면 정지',
 		[{ actionId: 'stop_after', options: { mode: 'toggle' } }],
-		[{ feedbackId: 'stop_after', options: {}, style: { bgcolor: Colors.teal, color: Colors.white } }],
+		[{ feedbackId: 'stop_after', options: {}, style: { bgcolor: Colors.brand, color: Colors.white } }],
+		icon(Icons.stop_after),
 	)
 	for (let n = 1; n <= 10; n++) {
 		p[`pad_${n}`] = {
 			...key(
 				`효과음 ${n}`,
-				`${n}\n${V(`pad_${n}_name`)}`,
+				V(`pad_${n}_name`),
 				[{ actionId: 'pad_trigger', options: { slot: n } }],
 				[{ feedbackId: 'pad_playing', options: { slot: n }, style: { bgcolor: Colors.orange, color: Colors.white } }],
+				icon(Icons[`pad${n}` as keyof typeof Icons]),
 			),
-			previewStyle: { text: `효과음\n${n}` },
+			previewStyle: { text: `효과음 ${n}`, ...icon(Icons[`pad${n}` as keyof typeof Icons]) },
 			keywords: ['pad', 'sfx', 'jingle', '효과음'],
 		}
 	}
 
 	// extras
-	p.previous = key('이전 곡', '이전', [{ actionId: 'previous', options: {} }])
+	p.previous = key('이전 곡', '이전 곡', [{ actionId: 'previous', options: {} }], [], icon(Icons.previous))
 	p.pause = key(
 		'일시정지',
-		'일시\n정지',
+		'일시정지',
 		[{ actionId: 'pause', options: {} }],
 		[{ feedbackId: 'paused', options: {}, style: { bgcolor: Colors.amber, color: Colors.black } }],
+		icon(Icons.pause),
 	)
 	p.resume = key(
 		'이어서 재생',
 		'재생',
 		[{ actionId: 'resume', options: {} }],
 		[{ feedbackId: 'playing', options: {}, style: { bgcolor: Colors.green, color: Colors.white } }],
+		icon(Icons.play),
 	)
 	p.go_selected = key(
 		'고른 곡 처음부터 재생 (Go)',
 		'GO',
 		[{ actionId: 'go', options: { track: '', playlistId: '', trackId: '' } }],
 		[{ feedbackId: 'playing', options: {}, style: { bgcolor: Colors.green, color: Colors.white } }],
+		icon(Icons.go),
 	)
-	p.skip_back = key('10초 뒤로', '-10초', [{ actionId: 'skip', options: { by: -10 } }])
-	p.skip_fwd = key('10초 앞으로', '+10초', [{ actionId: 'skip', options: { by: 10 } }])
-	p.pads_stop = key('효과음 전부 멈춤', '효과음\n전부 멈춤', [{ actionId: 'pads_stop', options: {} }])
+	p.skip_back = key('10초 뒤로', '10초 뒤로', [{ actionId: 'skip', options: { by: -10 } }], [], icon(Icons.back10))
+	p.skip_fwd = key('10초 앞으로', '10초 앞으로', [{ actionId: 'skip', options: { by: 10 } }], [], icon(Icons.fwd10))
+	p.pads_stop = key(
+		'효과음 전부 멈춤',
+		'효과음 멈춤',
+		[{ actionId: 'pads_stop', options: {} }],
+		[],
+		icon(Icons.pads_stop),
+	)
 	p.now_playing = {
 		type: 'simple',
 		name: '지금 곡 (제목·남은 시간, 누르지 않는 표시용)',
@@ -140,6 +161,7 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 		'방송',
 		[],
 		[{ feedbackId: 'announcing', options: {}, style: { bgcolor: Colors.red, color: Colors.white } }],
+		icon(Icons.announce),
 	)
 	p.output_problem = key(
 		'출력 장치 문제 표시',
@@ -149,18 +171,19 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 			{
 				feedbackId: 'output_problem',
 				options: {},
-				style: { bgcolor: Colors.red, color: Colors.white, text: '출력\n문제' },
+				style: { bgcolor: Colors.red, color: Colors.white, text: '출력 문제' },
 			},
 		],
+		icon(Icons.warning),
 	)
 	p.link = {
 		type: 'simple',
 		name: '연결 상태',
-		style: style('큐플레이어'),
+		style: style('큐플레이어', icon(Icons.link)),
 		steps: [],
 		feedbacks: [
 			{ feedbackId: 'connected', options: {}, style: { bgcolor: Colors.green, color: Colors.white } },
-			offline('큐플레이어\n연결 끊김'),
+			offline('연결 끊김'),
 		],
 	}
 
@@ -189,7 +212,19 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 					id: 'pads_all',
 					type: 'simple',
 					name: '효과음 1~10 · 전부 멈춤',
-					presets: ['pad_1', 'pad_2', 'pad_3', 'pad_4', 'pad_5', 'pad_6', 'pad_7', 'pad_8', 'pad_9', 'pad_10', 'pads_stop'],
+					presets: [
+						'pad_1',
+						'pad_2',
+						'pad_3',
+						'pad_4',
+						'pad_5',
+						'pad_6',
+						'pad_7',
+						'pad_8',
+						'pad_9',
+						'pad_10',
+						'pads_stop',
+					],
 				},
 			],
 		},

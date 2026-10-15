@@ -55,6 +55,10 @@ export const Colors = {
 	teal: 0x0c8599,
 	grey: 0x2b2b2b,
 	greyText: 0x8a8a8a,
+	/** 큐톤 보라 (Cue Remote 앱의 켜짐 색) */
+	brand: 0x6747ee,
+	/** 아이콘 버튼 바탕 (앱 단추와 같은 짙은 회색) */
+	key: 0x1c1c1f,
 } as const
 
 export function feedbackDefinitions(
