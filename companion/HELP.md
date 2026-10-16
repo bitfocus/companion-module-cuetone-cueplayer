@@ -29,8 +29,20 @@
 
 ### 변수 (Variables)
 
-`$(cueplayer:state)` `state_label` `current_title` `current_playlist` `remaining`(m:ss) `remaining_seconds` `elapsed` `next_title` `cued_title` `pad_1_name` … `pad_10_name`
-(앞의 `cueplayer` 는 연결 이름에 따라 바뀌어요.)
+| 변수                                       | 뜻                                                                    |
+| ------------------------------------------ | --------------------------------------------------------------------- |
+| `state` / `state_label`                    | 상태 (playing · paused · stopped · fading · disconnected / 한글)      |
+| `current_title` / `current_playlist`       | 지금 곡 제목 / 그 곡의 목록 이름                                      |
+| `remaining` / `remaining_seconds`          | 남은 시간 (m:ss) / 초                                                 |
+| `elapsed`                                  | 지난 시간 (m:ss)                                                      |
+| `next_title`                               | 다음에 이어질 곡                                                      |
+| `previous_title` / `previous_playlist`     | 이전 곡 (⏮ 로 돌아갈 곡) / 그 곡의 목록 이름                          |
+| `cued_title`                               | 올려 둔(대기) 곡                                                      |
+| `pad_1_name`, `pad_2_name` … `pad_10_name` | 효과음 1~10번 칸 이름 (`pad_` + 칸 번호 + `_name`, 빈 칸은 비어 있음) |
+
+쓸 때는 `$(cueplayer:previous_title)`, `$(cueplayer:pad_3_name)` 처럼 써요. 앞의 `cueplayer` 는 연결 이름에 따라 바뀌어요.
+
+**이전 곡**은 큐플레이어 ⏮ 가 가는 곡이에요: 지금 곡이 든 목록에서 바로 앞 곡(파일을 못 찾는 곡은 건너뜀). 목록의 첫 곡이거나 곡이 없으면 비어 있어요. 곡이 바뀔 때마다 그 목록을 다시 읽어서, 행사 중에 목록 순서를 바꿔도 따라가요. (⏮ 는 곡이 3초 넘게 지났으면 먼저 그 곡 처음으로 가요 — 한 번 더 누르면 이전 곡.)
 
 ### 프리셋 — 스트림덱 15키 한 장
 
@@ -41,7 +53,7 @@
 | 효과음 4                       | 효과음 5    | 효과음 6            | 효과음 7  | 효과음 8 |
 
 재생 키: 곡 끝에서 다음 곡과 겹치는 동안에도 끝나 가는 곡의 남은 시간을 끝까지 보여 줘요. 재생 중 초록 → 끝나기 30초 전 주황 → 10초 전 빨강, 일시정지 노랑, 페이드 보라, 끊기면 회색. 효과음 키는 칸 이름을 보여 주고 울리는 동안 주황.
-효과음 9·10번·효과음 전부 멈춤·이전 곡·±10초·지금 곡 표시는 "효과음", "더 보기" 묶음에 있어요.
+효과음 9·10번·효과음 전부 멈춤·이전 곡(이전 곡 제목 표시)·±10초·지금 곡 표시는 "효과음", "더 보기" 묶음에 있어요.
 
 ### 안 될 때
 
@@ -60,4 +72,9 @@ Controls CueTone **CuePlayer** (event music player) through its HTTP remote API 
 2. Same computer: keep host `127.0.0.1`, port `53100`, no token needed.
 3. Another computer: set CuePlayer to accept the same network, then enter that computer's IP and the **token** shown in CuePlayer (sent as `Authorization: Bearer`).
 
-Actions cover go (pick a song from the playlist dropdown), play/pause toggle, pause, resume, stop, restart, fade stop, next, previous, seek, skip ±s, voice-over and stop-after-this-track (on/off/toggle), sound pads 1–10 trigger/stop and stop all. Feedbacks show playing, paused, fading, stopped, voice-over, stop-after-this-track, pad playing, announcing, remaining below N s, connected/disconnected and output problems; when the connection drops every state feedback turns off. A ready 15-key Stream Deck page is included in the presets.
+Actions cover go (pick a song from the playlist dropdown), play/pause toggle, pause, resume, stop, restart, fade stop, next, previous, seek, skip ±s, voice-over and stop-after-this-track (on/off/toggle), sound pads 1–10 trigger/stop and stop all. Feedbacks show playing, paused, fading, stopped, voice-over, stop-after-this-track, pad playing, announcing, remaining below N s, connected/disconnected and output problems; when the connection drops every state feedback turns off. A ready 15-key Stream Deck page is included in the presets; the "Previous" key in "More" shows the previous song's title, like "Next" shows the next one.
+
+Variables (use as `$(cueplayer:name)`; `cueplayer` is your connection label):
+`state`, `state_label`, `current_title`, `current_playlist`, `remaining` (m:ss), `remaining_seconds`, `elapsed`, `next_title`, `previous_title`, `previous_playlist`, `cued_title`, and one per sound pad: `pad_1_name`, `pad_2_name` … `pad_10_name` (`pad_` + slot number + `_name`, empty for an empty slot).
+
+`previous_title` is the song CuePlayer's ⏮ goes back to: the one before the current song in its playlist (songs with a missing file are skipped). It is empty at the first song or when nothing is loaded. The list is re-read on every song change, so reordering it during the show is picked up. (Like the app, ⏮ first jumps to the start of the current song when it has played for more than 3 s.)

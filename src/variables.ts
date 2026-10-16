@@ -17,6 +17,9 @@ export type VariablesSchema = {
 	remaining_seconds: number | string
 	elapsed: string
 	next_title: string
+	/** the song ⏮ goes back to (before the current one in its list), '' at the first song */
+	previous_title: string
+	previous_playlist: string
 	cued_title: string
 } & PadNameVariables
 
@@ -30,6 +33,8 @@ export function variableDefinitions(): CompanionVariableDefinitions<VariablesSch
 		remaining_seconds: { name: '남은 시간 (초)' },
 		elapsed: { name: '지난 시간 (m:ss)' },
 		next_title: { name: '다음에 이어질 곡 제목' },
+		previous_title: { name: '이전 곡 제목 (⏮ 로 돌아갈 곡, 첫 곡이면 비어 있음)' },
+		previous_playlist: { name: '이전 곡의 목록 이름' },
 		cued_title: { name: '올려 둔(대기) 곡 제목' },
 	}
 	for (let n = 1; n <= 10; n++) defs[`pad_${n}_name`] = { name: `효과음 ${n}번 칸 이름` }

@@ -160,6 +160,66 @@ describe('CuePlayerConnection', () => {
 		expect(host.vars.state).toBe('stopped')
 	})
 
+	it('previous song = the one ⏮ goes to: before the current one in its list, missing files skipped', async () => {
+		const { m, host, conn } = await setup()
+		const entrance = m.mock.playlists[0]
+		entrance.tracks = [
+			{ id: 'ta', title: 'A 오프닝', duration: 100 },
+			{ id: 'tb', title: 'B 신랑 입장', duration: 100 },
+			{ id: 'tm', title: '없는 파일', duration: 100, missing: true },
+			{ id: 'tc', title: 'C 신부 입장', duration: 100 },
+			{ id: 'td', title: 'D 축가', duration: 100 },
+		]
+		await until(() => host.link === 'ok' && conn.library !== undefined)
+		expect(host.vars.previous_title).toBe('')
+
+		// middle of the list (the missing file before it is skipped, as CuePlayer's queue skips it)
+		await conn.send(Commands.go(entrance.id, 'tc'), '재생')
+		expect(host.vars.current_title).toBe('C 신부 입장')
+		expect(host.vars.previous_title).toBe('B 신랑 입장')
+		expect(host.vars.previous_playlist).toBe('입장')
+
+		// first song: nothing before it
+		await conn.send(Commands.go(entrance.id, 'ta'), '재생')
+		expect(host.vars.previous_title).toBe('')
+		expect(host.vars.previous_playlist).toBe('')
+
+		// next / previous move it along
+		await conn.send(Commands.next(), '다음 곡')
+		expect(host.vars.current_title).toBe('B 신랑 입장')
+		expect(host.vars.previous_title).toBe('A 오프닝')
+		await conn.send(Commands.next(), '다음 곡')
+		expect(host.vars.current_title).toBe('C 신부 입장')
+		expect(host.vars.previous_title).toBe('B 신랑 입장')
+		await conn.send(Commands.next(), '다음 곡')
+		expect(host.vars.previous_title).toBe('C 신부 입장')
+		await conn.send(Commands.previous(), '이전 곡')
+		expect(host.vars.current_title).toBe('C 신부 입장')
+		expect(host.vars.previous_title).toBe('B 신랑 입장')
+		await conn.send(Commands.previous(), '이전 곡')
+		expect(host.vars.previous_title).toBe('A 오프닝')
+
+		// another playlist: the same song (t…01) is 1st in 입장 but 2nd in 시상식 — the current list decides
+		const awards = m.mock.playlists[1]
+		await conn.send(Commands.go(awards.id, 't000000000001'), '재생')
+		expect(host.vars.current_playlist).toBe('시상식')
+		expect(host.vars.previous_title).toBe('수상자 등장')
+		expect(host.vars.previous_playlist).toBe('시상식')
+
+		// the list is edited in the app: the next song change re-reads it
+		awards.tracks.splice(1, 0, { id: 'tnew', title: '새로 넣은 곡', duration: 30 })
+		await conn.send(Commands.go(awards.id, 'tnew'), '재생')
+		await until(() => host.vars.previous_title === '수상자 등장')
+		await conn.send(Commands.next(), '다음 곡')
+		expect(host.vars.current_title).toBe('오프닝 팡파르')
+		expect(host.vars.previous_title).toBe('새로 넣은 곡')
+
+		// connection lost → empty
+		await m.close()
+		await until(() => host.link === 'connection_failure')
+		expect(host.vars.previous_title).toBe('')
+	})
+
 	it('reloads the library when the app restarts (new instanceId)', async () => {
 		const { m, host } = await setup()
 		await until(() => host.libraries.length === 1)

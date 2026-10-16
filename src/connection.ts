@@ -54,6 +54,8 @@ export class CuePlayerConnection {
 	private libraryLoading = false
 	private libraryKeyValue = ''
 	private lastStatusReloadAt = 0
+	/** "playlistId|trackId" of the current song when its list was last re-read (for the previous song) */
+	private currentListKey = ''
 	/** requests are numbered when sent; an older answer never overwrites a newer one */
 	private seq = 0
 	private appliedSeq = 0
@@ -114,6 +116,7 @@ export class CuePlayerConnection {
 		this.appliedSeq = my
 		this.applyStatus(s)
 		this.maybeReloadLibrary(s)
+		this.maybeRefreshCurrentList(s)
 	}
 
 	private failed(e: unknown): void {
@@ -144,17 +147,7 @@ export class CuePlayerConnection {
 	/** Push status into variables / feedbacks. Only what changed is sent to Companion. */
 	applyStatus(s: CuePlayerStatus | null): void {
 		this.status = s
-		const vars = statusToVariables(s, this.vars)
-		const changed: Partial<VariablesSchema> = {}
-		let any = false
-		for (const [k, v] of Object.entries(vars) as [keyof VariablesSchema, VariablesSchema[keyof VariablesSchema]][]) {
-			if (this.vars[k] !== v) {
-				;(changed as Record<string, unknown>)[k] = v
-				any = true
-			}
-		}
-		if (any) this.host.setVariableValues(changed)
-		this.vars = vars
+		this.pushVariables()
 
 		const { position: _p, remaining, revision: _r, ...stable } = s ?? ({} as Partial<CuePlayerStatus>)
 		const stableKey = s ? JSON.stringify(stable) : 'null'
@@ -165,6 +158,71 @@ export class CuePlayerConnection {
 		this.stableKey = stableKey
 		this.timeKey = timeKey
 		if (groups.length) this.host.checkFeedbacks(groups)
+	}
+
+	/** Variables from the last status + library (the previous song comes from the library). Only changes are sent. */
+	private pushVariables(): void {
+		const vars = statusToVariables(this.status, this.vars, this.library)
+		const changed: Partial<VariablesSchema> = {}
+		let any = false
+		for (const [k, v] of Object.entries(vars) as [keyof VariablesSchema, VariablesSchema[keyof VariablesSchema]][]) {
+			if (this.vars[k] !== v) {
+				;(changed as Record<string, unknown>)[k] = v
+				any = true
+			}
+		}
+		if (any) this.host.setVariableValues(changed)
+		this.vars = vars
+	}
+
+	/**
+	 * The previous song is read from the current playlist, which can be edited in the app while it plays.
+	 * Each time the current song (or its list) changes — the status revision goes up with it — re-read just that
+	 * one list, so ⏮'s target is right without waiting for the 30 s reload. Once per song, so a list that really
+	 * lacks the song doesn't make a loop.
+	 */
+	private maybeRefreshCurrentList(s: CuePlayerStatus): void {
+		const cur = s.current
+		if (!cur?.playlistId || !cur.id || !this.library) return
+		const key = `${cur.playlistId}|${cur.id}`
+		if (key === this.currentListKey || this.libraryLoading) return
+		this.currentListKey = key
+		void this.refreshPlaylist(cur.playlistId)
+	}
+
+	private async refreshPlaylist(id: string): Promise<void> {
+		this.libraryLoading = true
+		try {
+			const fresh = await this.client.getPlaylist(id)
+			if (!this.running || !this.library) return
+			const has = this.library.playlists.some((p) => p.id === id)
+			this.setLibrary(
+				{
+					playlists: has
+						? this.library.playlists.map((p) => (p.id === id ? fresh : p))
+						: [...this.library.playlists, fresh],
+				},
+				`지금 곡 바뀜: ${fresh.name}`,
+			)
+		} catch (e) {
+			this.host.log('debug', `지금 목록을 다시 읽지 못했어요: ${(e as Error).message}`)
+			this.currentListKey = '' // try again on the next poll
+		} finally {
+			this.libraryLoading = false
+		}
+	}
+
+	/** Keep a new library, re-run the variables (previous song) and tell the module when the dropdowns change. */
+	private setLibrary(lib: Library, reason: string): void {
+		this.library = lib
+		this.pushVariables()
+		const key = libraryKey(lib)
+		if (key !== this.libraryKeyValue) {
+			this.libraryKeyValue = key
+			const tracks = lib.playlists.reduce((n, p) => n + p.tracks.length, 0)
+			this.host.log('debug', `목록 ${lib.playlists.length}개 · 곡 ${tracks}개 불러옴 (${reason})`)
+			this.host.libraryChanged(lib)
+		}
 	}
 
 	/** Reload the dropdown library when the app restarted or the current playlist changed. */
@@ -191,14 +249,7 @@ export class CuePlayerConnection {
 		try {
 			const lib = await loadLibrary(this.client)
 			if (!this.running) return
-			this.library = lib
-			const key = libraryKey(lib)
-			if (key !== this.libraryKeyValue) {
-				this.libraryKeyValue = key
-				const tracks = lib.playlists.reduce((n, p) => n + p.tracks.length, 0)
-				this.host.log('debug', `목록 ${lib.playlists.length}개 · 곡 ${tracks}개 불러옴 (${reason})`)
-				this.host.libraryChanged(lib)
-			}
+			this.setLibrary(lib, reason)
 		} catch (e) {
 			this.host.log('debug', `목록을 불러오지 못했어요: ${(e as Error).message}`)
 		} finally {

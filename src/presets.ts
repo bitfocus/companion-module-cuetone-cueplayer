@@ -113,7 +113,13 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 	}
 
 	// extras
-	p.previous = key('이전 곡', '이전 곡', [{ actionId: 'previous', options: {} }], [], icon(Icons.previous))
+	p.previous = key(
+		'이전 곡 (이전 곡 제목)',
+		V('previous_title'),
+		[{ actionId: 'previous', options: {} }],
+		[],
+		icon(Icons.previous),
+	)
 	p.pause = key(
 		'일시정지',
 		'일시정지',

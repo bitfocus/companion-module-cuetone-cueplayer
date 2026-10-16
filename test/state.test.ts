@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { previousTrack, type Library } from '../src/library.js'
 import { Checks, formatTime, statusToVariables, toggleCommand } from '../src/state.js'
 import type { CuePlayerStatus } from '../src/types.js'
 
@@ -155,5 +156,63 @@ describe('play/pause toggle', () => {
 		expect(toggleCommand({ ...playing, state: 'paused' })).toBe('resume')
 		expect(toggleCommand({ ...playing, state: 'stopped', current: null })).toBe('go')
 		expect(toggleCommand(null)).toBe('resume')
+	})
+})
+
+describe('previous song (⏮)', () => {
+	const lib: Library = {
+		playlists: [
+			{
+				id: 'p1',
+				name: '입장',
+				tracks: [
+					{ id: 't0', title: '오프닝' },
+					{ id: 'tx', title: '없는 파일', missing: true },
+					{ id: 't1', title: '신랑 입장' },
+					{ id: 't2', title: '축가' },
+				],
+			},
+			{
+				id: 'p2',
+				name: '시상식',
+				tracks: [
+					{ id: 't9', title: '수상자 등장' },
+					{ id: 't1', title: '신랑 입장' },
+				],
+			},
+		],
+	}
+	const at = (id: string, playlistId = 'p1'): CuePlayerStatus => ({
+		...playing,
+		current: { id, title: id, playlistId, playlist: playlistId },
+	})
+
+	it('middle of the list → the song before, skipping missing files', () => {
+		expect(previousTrack(at('t2'), lib)?.track.title).toBe('신랑 입장')
+		expect(previousTrack(at('t1'), lib)?.track.title).toBe('오프닝')
+		expect(previousTrack(at('t1'), lib)?.playlist.name).toBe('입장')
+	})
+
+	it('first song, nothing loaded, unknown list or song → none', () => {
+		expect(previousTrack(at('t0'), lib)).toBeNull()
+		expect(previousTrack({ ...playing, current: null }, lib)).toBeNull()
+		expect(previousTrack(null, lib)).toBeNull()
+		expect(previousTrack(at('t1'), undefined)).toBeNull()
+		expect(previousTrack(at('t1', 'gone'), lib)).toBeNull()
+		expect(previousTrack(at('nope'), lib)).toBeNull()
+		expect(previousTrack({ ...playing, current: { id: 't1', title: '신랑 입장' } }, lib)).toBeNull()
+	})
+
+	it('the current playlist decides (one song in two lists)', () => {
+		expect(previousTrack(at('t1', 'p2'), lib)?.track.title).toBe('수상자 등장')
+	})
+
+	it('fills previous_title / previous_playlist, empty when disconnected', () => {
+		const v = statusToVariables(at('t2'), undefined, lib)
+		expect(v.previous_title).toBe('신랑 입장')
+		expect(v.previous_playlist).toBe('입장')
+		expect(statusToVariables(at('t0'), undefined, lib)).toMatchObject({ previous_title: '', previous_playlist: '' })
+		expect(statusToVariables(at('t2'))).toMatchObject({ previous_title: '', previous_playlist: '' })
+		expect(statusToVariables(null, v, lib)).toMatchObject({ previous_title: '', previous_playlist: '' })
 	})
 })

@@ -1,7 +1,7 @@
 import type { DropdownChoice } from '@companion-module/base'
 import type { CuePlayerClient } from './api.js'
 import { ApiError } from './api.js'
-import type { PlaylistDetail } from './types.js'
+import type { CuePlayerStatus, PlaylistDetail, PlaylistTrack } from './types.js'
 
 /** Value of the "곡" dropdown that means "the song chosen / cued in the app" (go without ids) */
 export const TRACK_SELECTED = ''
@@ -64,4 +64,23 @@ export function libraryKey(lib: Library | undefined): string {
 	return JSON.stringify(
 		(lib?.playlists ?? []).map((p) => [p.id, p.name, p.tracks.map((t) => [t.id, t.title, !!t.missing])]),
 	)
+}
+
+/**
+ * The song CuePlayer's ⏮ (transport/previous) would go to: the one before the current song in its playlist.
+ * CuePlayer plays a list as a queue without the songs whose file is missing (`tracks.filter { !$0.missing }`),
+ * so those are skipped here too. Section markers are not rows in `/playlists/{id}`, so nothing else to skip.
+ * null when nothing is loaded, at the first song, or when the list / song isn't known (yet).
+ */
+export function previousTrack(
+	status: CuePlayerStatus | null | undefined,
+	lib: Library | undefined,
+): { track: PlaylistTrack; playlist: PlaylistDetail } | null {
+	const cur = status?.current
+	if (!cur?.id || !cur.playlistId) return null
+	const playlist = lib?.playlists.find((p) => p.id === cur.playlistId)
+	if (!playlist) return null
+	const playable = playlist.tracks.filter((t) => !t.missing)
+	const i = playable.findIndex((t) => t.id === cur.id)
+	return i > 0 ? { track: playable[i - 1], playlist } : null
 }

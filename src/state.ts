@@ -1,3 +1,4 @@
+import { previousTrack, type Library } from './library.js'
 import type { CuePlayerStatus } from './types.js'
 import type { VariablesSchema } from './variables.js'
 
@@ -25,10 +26,12 @@ export function formatTime(seconds: number | undefined | null, round: 'floor' | 
 /**
  * Status → Companion variables. `status === null` means "not connected": everything becomes unknown,
  * except pad names, which keep their last value so a pad key still says what it is.
+ * `library` (the playlists the module loaded) gives the previous song — the status has no field for it.
  */
 export function statusToVariables(
 	status: CuePlayerStatus | null,
 	previous?: Partial<VariablesSchema>,
+	library?: Library,
 ): VariablesSchema {
 	const vars = {} as VariablesSchema
 	if (!status) {
@@ -40,6 +43,8 @@ export function statusToVariables(
 		vars.remaining_seconds = ''
 		vars.elapsed = '--:--'
 		vars.next_title = ''
+		vars.previous_title = ''
+		vars.previous_playlist = ''
 		vars.cued_title = ''
 		for (const n of PAD_SLOTS) vars[`pad_${n}_name`] = previous?.[`pad_${n}_name`] ?? ''
 		return vars
@@ -57,6 +62,9 @@ export function statusToVariables(
 	vars.remaining_seconds = hasCurrent ? Math.max(0, Math.ceil(remaining - 1e-6)) : 0
 	vars.elapsed = hasCurrent ? formatTime(status.position ?? 0) : '0:00'
 	vars.next_title = status.next?.title ?? ''
+	const prev = previousTrack(status, library)
+	vars.previous_title = prev?.track.title ?? ''
+	vars.previous_playlist = prev?.playlist.name ?? ''
 	vars.cued_title = status.cued?.title ?? ''
 	for (const n of PAD_SLOTS) {
 		const pad = status.pads?.find((p) => p.slot === n)
