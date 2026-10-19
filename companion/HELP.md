@@ -9,12 +9,12 @@
 3. **다른 컴퓨터**에서 조작하면: 받을 곳을 "같은 네트워크의 다른 기기도"로 바꾸고, 그 컴퓨터의 IP(설정 화면에 나와요)와 **토큰**을 이 모듈 설정에 넣어요. 처음 한 번 macOS 가 묻는 '들어오는 연결 허용'을 허용해야 해요.
 4. 포트는 보통 그대로 `53100`.
 
-| 설정           | 기본값    | 뜻                                                          |
-| -------------- | --------- | ----------------------------------------------------------- |
-| 주소 (IP)      | 127.0.0.1 | 큐플레이어가 도는 컴퓨터. 이름을 넣어도 되지만 IP 를 권해요 |
-| 포트           | 53100     | 큐플레이어 설정의 포트                                      |
-| 토큰           | (비움)    | `Authorization: Bearer` 로 보내요. 같은 네트워크일 때 필수  |
-| 상태 확인 간격 | 300 ms    | 상태를 이만큼마다 한 번 물어봐요(요청은 겹치지 않음)        |
+| 설정           | 기본값    | 뜻                                                                                                                     |
+| -------------- | --------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 주소 (IP)      | 127.0.0.1 | 큐플레이어가 도는 컴퓨터. 이름을 넣어도 되지만 IP 를 권해요                                                            |
+| 포트           | 53100     | 큐플레이어 설정의 포트                                                                                                 |
+| 토큰           | (비움)    | 같은 네트워크일 때 필수. 토큰은 그대로 보내지 않고 요청마다 서명해서 보내요(큐플레이어 맥 1.1.43 · 윈도우 1.0.49 이상) |
+| 상태 확인 간격 | 300 ms    | 상태를 이만큼마다 한 번 물어봐요(요청은 겹치지 않음)                                                                   |
 
 ### 동작 (Actions)
 
@@ -70,7 +70,7 @@ Controls CueTone **CuePlayer** (event music player) through its HTTP remote API 
 
 1. In CuePlayer open **Settings → Remote control** and turn it on.
 2. Same computer: keep host `127.0.0.1`, port `53100`, no token needed.
-3. Another computer: set CuePlayer to accept the same network, then enter that computer's IP and the **token** shown in CuePlayer (sent as `Authorization: Bearer`).
+3. Another computer: set CuePlayer to accept the same network, then enter that computer's IP and the **token** shown in CuePlayer. The token itself is never sent over the network — every request is signed with it (HMAC, CuePlayer Mac 1.1.43 / Windows 1.0.49 or newer).
 
 Actions cover go (pick a song from the playlist dropdown), play/pause toggle, pause, resume, stop, restart, fade stop, next, previous, seek, skip ±s, voice-over and stop-after-this-track (on/off/toggle), sound pads 1–10 trigger/stop and stop all. Feedbacks show playing, paused, fading, stopped, voice-over, stop-after-this-track, pad playing, announcing, remaining below N s, connected/disconnected and output problems; when the connection drops every state feedback turns off. A ready 15-key Stream Deck page is included in the presets; the "Previous" key in "More" shows the previous song's title, like "Next" shows the next one.
 

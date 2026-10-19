@@ -1,7 +1,7 @@
 import http from 'node:http'
 import net from 'node:net'
 import dns from 'node:dns/promises'
-import { randomUUID } from 'node:crypto'
+import { createHash, createHmac, randomBytes, randomUUID } from 'node:crypto'
 import type { CuePlayerStatus, PlaylistDetail, PlaylistSummary } from './types.js'
 
 export const API_PREFIX = '/api/v1'
@@ -43,17 +43,66 @@ export interface ClientOptions {
 const AUTH_CODES = new Set([401, 403, 429])
 const MAX_RESPONSE = 4 * 1024 * 1024
 
-/** Build the headers CuePlayer expects. Never Origin / Sec-Fetch-* (the app refuses browser requests). */
-export function buildHeaders(token: string | undefined, body: string | undefined): Record<string, string> {
+/**
+ * Request signature (CuePlayer 1.1.43 / 1.0.49+, same text as the app's RemoteControl):
+ * HMAC-SHA256(token, "v1\n" + METHOD + "\n" + target + "\n" + time + "\n" + nonce + "\n" + hex(SHA-256(body))) as "v1=<hex>".
+ * Another computer never sends the token itself — plain http on a shared network would let anyone watching reuse it.
+ */
+export function signature(
+	token: string,
+	method: string,
+	target: string,
+	time: string,
+	nonce: string,
+	body: string,
+): string {
+	const bodyHash = createHash('sha256').update(body, 'utf8').digest('hex')
+	const text = `v1\n${method.toUpperCase()}\n${target}\n${time}\n${nonce}\n${bodyHash}`
+	return 'v1=' + createHmac('sha256', token).update(text, 'utf8').digest('hex')
+}
+
+/** Where the request goes (for signing). loopback = CuePlayer on this computer */
+export interface SignTarget {
+	method: string
+	target: string
+	loopback: boolean
+	/** test hooks */
+	time?: number
+	nonce?: string
+}
+
+/**
+ * Build the headers CuePlayer expects. Never Origin / Sec-Fetch-* (the app refuses browser requests).
+ * With a token: always signed (X-Cue-Time · X-Cue-Nonce · X-Cue-Signature). The plain Bearer token is added only
+ * for CuePlayer on this computer (older apps that don't know signatures), never over the network.
+ */
+export function buildHeaders(
+	token: string | undefined,
+	body: string | undefined,
+	sign?: SignTarget,
+): Record<string, string> {
 	const headers: Record<string, string> = { Accept: 'application/json' }
 	if (body !== undefined) {
 		headers['Content-Type'] = 'application/json; charset=utf-8'
 		headers['Content-Length'] = String(Buffer.byteLength(body))
 	}
 	const t = token?.trim()
-	if (t) headers['Authorization'] = `Bearer ${t}`
+	if (!t) return headers
+	if (!sign) {
+		headers['Authorization'] = `Bearer ${t}`
+		return headers
+	}
+	const time = String(sign.time ?? Math.floor(Date.now() / 1000))
+	const nonce = sign.nonce ?? randomBytes(16).toString('hex')
+	headers['X-Cue-Time'] = time
+	headers['X-Cue-Nonce'] = nonce
+	headers['X-Cue-Signature'] = signature(t, sign.method, sign.target, time, nonce, body ?? '')
+	if (sign.loopback) headers['Authorization'] = `Bearer ${t}`
 	return headers
 }
+
+const isLoopback = (address: string): boolean =>
+	address === '127.0.0.1' || address === '::1' || address.startsWith('127.')
 
 /** Add a fresh requestId so CuePlayer can drop duplicates (retries) within 30 s. */
 export function withRequestId(
@@ -104,7 +153,11 @@ export class CuePlayerClient {
 	async request<T = unknown>(req: ApiRequest): Promise<T> {
 		const address = await this.address()
 		const payload = req.body === undefined ? undefined : JSON.stringify(req.body)
-		const headers = buildHeaders(this.opts.token, payload)
+		const headers = buildHeaders(this.opts.token, payload, {
+			method: req.method,
+			target: API_PREFIX + req.path,
+			loopback: isLoopback(address),
+		})
 		return new Promise<T>((resolve, reject) => {
 			const r = http.request(
 				{

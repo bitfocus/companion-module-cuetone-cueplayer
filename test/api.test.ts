@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { ApiError, Commands, CuePlayerClient, buildHeaders, withRequestId } from '../src/api.js'
+import { ApiError, Commands, CuePlayerClient, buildHeaders, signature, withRequestId } from '../src/api.js'
 import { startMockCuePlayer } from './mock-cueplayer.mjs'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
@@ -22,6 +22,30 @@ describe('request building', () => {
 		const g = buildHeaders('', undefined)
 		expect(g['Authorization']).toBeUndefined()
 		expect(g['Content-Type']).toBeUndefined()
+	})
+
+	it('signs with the token and never sends the token itself to another computer', () => {
+		const lan = buildHeaders('tok', '{"a":1}', {
+			method: 'post',
+			target: '/api/v1/transport/play',
+			loopback: false,
+			time: 1700000000,
+			nonce: 'n'.repeat(16),
+		})
+		expect(lan['Authorization']).toBeUndefined()
+		expect(lan['X-Cue-Time']).toBe('1700000000')
+		expect(lan['X-Cue-Nonce']).toBe('nnnnnnnnnnnnnnnn')
+		// 맥 · 윈도우 앱과 같은 값 (고정 입력) — 앱 smoke 의 같은 검사와 짝
+		expect(lan['X-Cue-Signature']).toBe(
+			signature('tok', 'POST', '/api/v1/transport/play', '1700000000', 'nnnnnnnnnnnnnnnn', '{"a":1}'),
+		)
+		expect(lan['X-Cue-Signature']).toMatch(/^v1=[0-9a-f]{64}$/)
+		const local = buildHeaders('tok', undefined, { method: 'GET', target: '/api/v1/status', loopback: true })
+		expect(local['Authorization']).toBe('Bearer tok')
+		expect(local['X-Cue-Signature']).toMatch(/^v1=/)
+		expect(buildHeaders('tok', undefined, { method: 'GET', target: '/x', loopback: false })['X-Cue-Nonce']).not.toBe(
+			buildHeaders('tok', undefined, { method: 'GET', target: '/x', loopback: false })['X-Cue-Nonce'],
+		)
 	})
 
 	it('adds a fresh uuid requestId to every command body', () => {
