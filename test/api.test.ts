@@ -75,6 +75,7 @@ describe('request building', () => {
 		expect(Commands.seek(-4).body).toEqual({ position: 0 })
 		expect(Commands.skip(-10)).toEqual({ method: 'POST', path: '/transport/skip', body: { by: -10 } })
 		expect(Commands.background(true)).toEqual({ method: 'PUT', path: '/background', body: { enabled: true } })
+		expect(Commands.repeatOne(false)).toEqual({ method: 'PUT', path: '/repeat', body: { enabled: false } })
 		expect(Commands.stopAfter(false)).toEqual({ method: 'PUT', path: '/stop-after', body: { enabled: false } })
 		expect(Commands.padTrigger(3)).toEqual({ method: 'POST', path: '/pads/3/trigger', body: {} })
 		expect(Commands.padStop(9).path).toBe('/pads/9/stop')

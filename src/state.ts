@@ -83,6 +83,7 @@ export const Checks = {
 	stopped: (s: CuePlayerStatus | null): boolean => s?.state === 'stopped',
 	background: (s: CuePlayerStatus | null): boolean => s?.background === true,
 	stopAfter: (s: CuePlayerStatus | null): boolean => s?.stopAfter === true,
+	repeatOne: (s: CuePlayerStatus | null): boolean => s?.repeat === true,
 	announcing: (s: CuePlayerStatus | null): boolean => s?.announcing === true,
 	outputProblem: (s: CuePlayerStatus | null): boolean => !!s?.output?.problem,
 	padPlaying: (s: CuePlayerStatus | null, slot: number): boolean =>

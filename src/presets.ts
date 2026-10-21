@@ -98,6 +98,13 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 		[{ feedbackId: 'stop_after', options: {}, style: { bgcolor: Colors.brand, color: Colors.white } }],
 		icon(Icons.stop_after),
 	)
+	p.repeat_one = key(
+		'한 곡 반복 (켜고 끄기)',
+		'한 곡 반복',
+		[{ actionId: 'repeat_one', options: { mode: 'toggle' } }],
+		[{ feedbackId: 'repeat_one', options: {}, style: { bgcolor: Colors.brand, color: Colors.white } }],
+		icon(Icons.repeat_one),
+	)
 	for (let n = 1; n <= 10; n++) {
 		p[`pad_${n}`] = {
 			...key(
@@ -242,7 +249,7 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 					id: 'transport',
 					type: 'simple',
 					name: '곡 조작',
-					presets: ['go_selected', 'pause', 'resume', 'previous', 'skip_back', 'skip_fwd'],
+					presets: ['go_selected', 'pause', 'resume', 'previous', 'skip_back', 'skip_fwd', 'repeat_one'],
 				},
 				{
 					id: 'display',

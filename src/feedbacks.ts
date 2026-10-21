@@ -14,6 +14,7 @@ export type FeedbacksSchema = {
 	stopped: Bool<NoOptions>
 	background: Bool<NoOptions>
 	stop_after: Bool<NoOptions>
+	repeat_one: Bool<NoOptions>
 	pad_playing: Bool<{ slot: number }>
 	announcing: Bool<NoOptions>
 	remaining_below: Bool<{ seconds: number }>
@@ -33,6 +34,7 @@ export const FEEDBACK_GROUPS: Record<FeedbackGroup, FeedbackId[]> = {
 		'stopped',
 		'background',
 		'stop_after',
+		'repeat_one',
 		'pad_playing',
 		'announcing',
 		'connected',
@@ -101,6 +103,7 @@ export function feedbackDefinitions(
 			Checks.stopAfter,
 			Colors.teal,
 		),
+		repeat_one: simple('한 곡 반복 켜짐 · Repeat one on', '지금 곡을 반복하고 있을 때', Checks.repeatOne, Colors.teal),
 		announcing: simple('방송 중 · Announcing', 'TTS 방송이 나가는 중일 때', Checks.announcing, Colors.red),
 		connected: simple('연결됨 · Connected', '큐플레이어와 연결돼 있을 때', Checks.connected, Colors.green),
 		disconnected: simple(

@@ -28,7 +28,7 @@ def badge(n):
 
 ICONS = {
     'play': glyph('play_arrow'), 'pause': glyph('pause'), 'next': glyph('skip_next'), 'previous': glyph('skip_previous'),
-    'restart': glyph('replay'), 'voiceover': glyph('record_voice_over'), 'stop_after': glyph('stop_circle'),
+    'restart': glyph('replay'), 'voiceover': glyph('record_voice_over'), 'stop_after': glyph('stop_circle'), 'repeat_one': glyph('repeat_one'),
     'announce': glyph('campaign'), 'back10': glyph('replay_10'), 'fwd10': glyph('forward_10'), 'pads_stop': glyph('music_off'),
     'now': glyph('music_note'), 'warning': glyph('warning'), 'link': glyph('laptop_mac'), 'go': glyph('play_circle'),
     'fade': fade(), 'stop': stop_red(), **{f'pad{n}': badge(n) for n in range(1, 11)},

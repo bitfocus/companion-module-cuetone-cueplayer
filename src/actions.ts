@@ -20,6 +20,7 @@ export type ActionsSchema = {
 	skip: { options: { by: number } }
 	background: { options: { mode: OnOffToggle } }
 	stop_after: { options: { mode: OnOffToggle } }
+	repeat_one: { options: { mode: OnOffToggle } }
 	pad_trigger: { options: { slot: number } }
 	pad_stop: { options: { slot: number } }
 	pads_stop: { options: NoOptions }
@@ -168,6 +169,7 @@ export function actionDefinitions(host: ActionHost): CompanionActionDefinitions<
 		},
 		background: onOff('보이스오버 · Voice-over', (s) => s.background, Commands.background),
 		stop_after: onOff('끝나면 정지 · Stop after current', (s) => s.stopAfter, Commands.stopAfter),
+		repeat_one: onOff('한 곡 반복 · Repeat one', (s) => s.repeat, Commands.repeatOne),
 		pad_trigger: {
 			name: '효과음 울리기 · Pad trigger',
 			options: [{ id: 'slot', type: 'dropdown', label: '칸', choices: PAD_CHOICES, default: 1 }],

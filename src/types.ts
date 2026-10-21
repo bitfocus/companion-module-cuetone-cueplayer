@@ -36,6 +36,8 @@ export interface CuePlayerStatus {
 	ending?: { id?: string; title: string; remaining: number } | null
 	background?: boolean
 	stopAfter?: boolean
+	/** 한 곡 반복 중 (CuePlayer 10-21~). 옛 CuePlayer 는 안 보냄 */
+	repeat?: boolean
 	locked?: boolean
 	pads?: PadState[]
 	announcing?: boolean

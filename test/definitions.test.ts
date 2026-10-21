@@ -79,6 +79,7 @@ describe('actions', () => {
 		await run(defs, 'skip', { by: -10 })
 		await run(defs, 'background', { mode: 'toggle' })
 		await run(defs, 'stop_after', { mode: 'toggle' })
+		await run(defs, 'repeat_one', { mode: 'on' })
 		await run(defs, 'pad_trigger', { slot: 4 })
 		await run(defs, 'pad_stop', { slot: 4 })
 		await run(defs, 'pads_stop')
@@ -89,6 +90,7 @@ describe('actions', () => {
 			'POST /transport/skip {"by":-10}',
 			'PUT /background {"enabled":false}',
 			'PUT /stop-after {"enabled":true}',
+			'PUT /repeat {"enabled":true}',
 			'POST /pads/4/trigger {}',
 			'POST /pads/4/stop {}',
 			'POST /pads/stop {}',
@@ -121,6 +123,7 @@ describe('actions', () => {
 				'skip',
 				'background',
 				'stop_after',
+				'repeat_one',
 				'pad_trigger',
 				'pad_stop',
 				'pads_stop',
