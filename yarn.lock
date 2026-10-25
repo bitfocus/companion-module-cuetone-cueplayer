@@ -1019,7 +1019,7 @@ __metadata:
     rimraf: "npm:^6.1.3"
     typescript: "npm:~6.0.3"
     typescript-eslint: "npm:^8.71.0"
-    vitest: "npm:^3"
+    vitest: "npm:^3.2.7"
   languageName: unknown
   linkType: soft
 
@@ -2440,7 +2440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^3":
+"vitest@npm:^3.2.7":
   version: 3.2.7
   resolution: "vitest@npm:3.2.7"
   dependencies:
