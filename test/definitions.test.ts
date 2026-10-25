@@ -83,6 +83,10 @@ describe('actions', () => {
 		await run(defs, 'pad_trigger', { slot: 4 })
 		await run(defs, 'pad_stop', { slot: 4 })
 		await run(defs, 'pads_stop')
+		await run(defs, 'pad_page_next')
+		await run(defs, 'pad_page_previous')
+		await run(defs, 'pad_page_go', { page: 2 })
+		await run(defs, 'pad_page_go', { page: 0 })
 		expect(sent.map((r) => `${r.method} ${r.path} ${JSON.stringify(r.body)}`)).toEqual([
 			'POST /transport/go {"playlistId":"pA","trackId":"t1"}',
 			'POST /transport/fadeout {}',
@@ -94,6 +98,9 @@ describe('actions', () => {
 			'POST /pads/4/trigger {}',
 			'POST /pads/4/stop {}',
 			'POST /pads/stop {}',
+			'POST /pads/page/next {}',
+			'POST /pads/page/previous {}',
+			'PUT /pads/page {"page":2}',
 		])
 		await run(defs, 'play_pause')
 		expect(host.togglePlayPause).toHaveBeenCalledOnce()
@@ -127,6 +134,9 @@ describe('actions', () => {
 				'pad_trigger',
 				'pad_stop',
 				'pads_stop',
+				'pad_page_next',
+				'pad_page_previous',
+				'pad_page_go',
 			].sort(),
 		)
 	})

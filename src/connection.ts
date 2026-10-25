@@ -266,7 +266,12 @@ export class CuePlayerConnection {
 			return true
 		} catch (e) {
 			const err = e as ApiError
-			this.host.log('warn', `${label} 실패: ${err.message}${err.code ? ` (${err.code})` : ''}`)
+			// 판 명령은 새 큐플레이어부터: 옛 앱은 경로를 몰라 404 → 업데이트 안내
+			const hint =
+				err.statusCode === 404 && req.path.startsWith('/pads/page')
+					? ' · 효과음 판은 큐플레이어 맥 1.1.53 · 윈도우 1.0.63 이상에서 돼요 (판 번호가 없으면 그대로)'
+					: ''
+			this.host.log('warn', `${label} 실패: ${err.message}${err.code ? ` (${err.code})` : ''}${hint}`)
 			return false
 		}
 	}

@@ -24,6 +24,9 @@ export type ActionsSchema = {
 	pad_trigger: { options: { slot: number } }
 	pad_stop: { options: { slot: number } }
 	pads_stop: { options: NoOptions }
+	pad_page_next: { options: NoOptions }
+	pad_page_previous: { options: NoOptions }
+	pad_page_go: { options: { page: number } }
 }
 
 /** What the action callbacks need from the module */
@@ -185,5 +188,25 @@ export function actionDefinitions(host: ActionHost): CompanionActionDefinitions<
 			},
 		},
 		pads_stop: simple('효과음 전부 멈춤 · All pads stop', '울리는 효과음을 모두 멈춰요', Commands.padsStop),
+		pad_page_next: simple(
+			'효과음 다음 판 · Next pad page',
+			'효과음 판을 다음 판으로 (마지막 판이면 처음으로). 나오던 효과음은 그대로 (CuePlayer 맥 1.1.53 · 윈도우 1.0.63~)',
+			Commands.padPageNext,
+		),
+		pad_page_previous: simple(
+			'효과음 앞 판 · Previous pad page',
+			'효과음 판을 앞 판으로 (첫 판이면 마지막으로). 나오던 효과음은 그대로 (CuePlayer 맥 1.1.53 · 윈도우 1.0.63~)',
+			Commands.padPagePrevious,
+		),
+		pad_page_go: {
+			name: '효과음 판 고르기 · Go to pad page',
+			description: '몇 번째 판으로 (1부터). 그런 판이 없으면 아무 일도 없어요 (CuePlayer 맥 1.1.53 · 윈도우 1.0.63~)',
+			options: [{ id: 'page', type: 'number', label: '판 (1부터)', default: 1, min: 1, max: 99, step: 1 }],
+			callback: async (event) => {
+				const page = Math.round(Number(event.options.page))
+				if (!Number.isFinite(page) || page < 1) return
+				await host.send(Commands.padPage(page), `효과음 ${page}번째 판`)
+			},
+		},
 	}
 }

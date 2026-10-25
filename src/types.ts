@@ -21,6 +21,15 @@ export interface PadState {
 	empty: boolean
 }
 
+/** 효과음 판 (CuePlayer 맥 1.1.53 · 윈도우 1.0.63~). 옛 CuePlayer 는 안 보냄 */
+export interface PadPageInfo {
+	/** 1부터 */
+	index: number
+	count: number
+	name: string
+	names?: string[]
+}
+
 export interface CuePlayerStatus {
 	apiVersion: number
 	appVersion?: string
@@ -39,7 +48,12 @@ export interface CuePlayerStatus {
 	/** 한 곡 반복 중 (CuePlayer 10-21~). 옛 CuePlayer 는 안 보냄 */
 	repeat?: boolean
 	locked?: boolean
+	/** 지금 판의 10칸 */
 	pads?: PadState[]
+	/** 지금 보고 있는 효과음 판 */
+	padPage?: PadPageInfo
+	/** 판을 넘긴 뒤에도 다른 판에서 나오는 효과음 (자리 번호 · 이름), 없으면 안 옴 */
+	padPlayingElsewhere?: { slot: number; name: string } | null
 	announcing?: boolean
 	output?: { name?: string; problem?: string | null }
 }

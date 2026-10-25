@@ -43,6 +43,11 @@ export class MockCuePlayer {
 		this.enabled = enabled
 		this.playlists = defaultLibrary()
 		this.pads = defaultPads()
+		/** 효과음 판 (CuePlayer 맥 1.1.53 · 윈도우 1.0.63~). false = 옛 앱 (판 없음, 판 경로 404) */
+		this.supportsPages = true
+		this.pageNames = ['기본', '2부 레크리에이션', '경품 추첨']
+		this.pageIndex = 0
+		this.elsewhere = null
 		this.requests = []
 		this.statusInFlight = 0
 		this.maxStatusInFlight = 0
@@ -102,6 +107,17 @@ export class MockCuePlayer {
 			stopAfter: this.stopAfter,
 			locked: false,
 			pads: this.pads.map((p, i) => ({ slot: i + 1, name: p.name, playing: p.playing, empty: p.empty })),
+			...(this.supportsPages
+				? {
+						padPage: {
+							index: this.pageIndex + 1,
+							count: this.pageNames.length,
+							name: this.pageNames[this.pageIndex],
+							names: this.pageNames,
+						},
+						...(this.elsewhere ? { padPlayingElsewhere: this.elsewhere } : {}),
+					}
+				: {}),
 			announcing: this.announcing,
 			output: { name: 'Built-in Output', problem: this.outputProblem },
 		}
@@ -296,6 +312,23 @@ export class MockCuePlayer {
 				if ((r = need('POST'))) return r
 				for (const p of this.pads) p.playing = false
 				return ok()
+			case 'pads/page/next':
+			case 'pads/page/previous': {
+				if (!this.supportsPages) return err(404, 'not_found', '없는 주소예요')
+				if ((r = need('POST'))) return r
+				const n = this.pageNames.length
+				this.pageIndex = (this.pageIndex + (route.endsWith('next') ? 1 : -1) + n) % n
+				return ok()
+			}
+			case 'pads/page': {
+				if (!this.supportsPages) return err(404, 'not_found', '없는 주소예요')
+				if (m !== 'PUT') return err(405, 'method_not_allowed', '메서드가 달라요')
+				const page = body.page
+				if (!Number.isInteger(page) || page < 1) return bad('page(1부터)가 필요해요')
+				if (page > this.pageNames.length) return err(404, 'not_found', `${page}번째 효과음 판이 없어요`)
+				this.pageIndex = page - 1
+				return ok()
+			}
 		}
 		if (parts.length === 3 && parts[0] === 'pads') {
 			const slot = Number(parts[1])

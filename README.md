@@ -1,7 +1,7 @@
 # companion-module-cuetone-cueplayer
 
 [Bitfocus Companion](https://bitfocus.io/companion) 에서 큐톤 **큐플레이어**(행사 음악 플레이어)를 조작하는 모듈이에요.
-큐플레이어의 원격 조작 HTTP API v1(`http://<주소>:53100/api/v1/…`)으로 재생·일시정지·페이드아웃·다음 곡·효과음 1~10 을 누르고, 상태(재생 중, 남은 시간, 다음 곡, 이전 곡, 효과음 칸 이름)를 버튼 색과 글자로 보여 줘요. 스트림덱 15키 한 장 프리셋이 들어 있어요.
+큐플레이어의 원격 조작 HTTP API v1(`http://<주소>:53100/api/v1/…`)으로 재생·일시정지·페이드아웃·다음 곡·효과음 1~10 · 효과음 판 넘기기를 누르고, 상태(재생 중, 남은 시간, 다음 곡, 이전 곡, 효과음 칸 · 판 이름)를 버튼 색과 글자로 보여 줘요. 스트림덱 15키 한 장 프리셋이 들어 있어요.
 
 사용 설명은 [companion/HELP.md](./companion/HELP.md), 라이선스는 [LICENSE](./LICENSE)(MIT).
 

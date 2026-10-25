@@ -23,6 +23,13 @@ export function formatTime(seconds: number | undefined | null, round: 'floor' | 
 	return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`
 }
 
+/** padPage only when it makes sense (옛 CuePlayer · 이상한 값이면 없음) */
+export function validPage(p: CuePlayerStatus['padPage']): CuePlayerStatus['padPage'] | undefined {
+	if (!p || !Number.isInteger(p.index) || !Number.isInteger(p.count)) return undefined
+	if (p.count < 1 || p.index < 1 || p.index > p.count) return undefined
+	return { ...p, name: typeof p.name === 'string' ? p.name : '' }
+}
+
 /**
  * Status → Companion variables. `status === null` means "not connected": everything becomes unknown,
  * except pad names, which keep their last value so a pad key still says what it is.
@@ -46,6 +53,11 @@ export function statusToVariables(
 		vars.previous_title = ''
 		vars.previous_playlist = ''
 		vars.cued_title = ''
+		// 판 이름도 칸 이름처럼 마지막 값을 남김 (버튼이 무슨 판인지 계속 보이게)
+		vars.pad_page_index = previous?.pad_page_index ?? ''
+		vars.pad_page_count = previous?.pad_page_count ?? ''
+		vars.pad_page_name = previous?.pad_page_name ?? ''
+		vars.pad_elsewhere_name = ''
 		for (const n of PAD_SLOTS) vars[`pad_${n}_name`] = previous?.[`pad_${n}_name`] ?? ''
 		return vars
 	}
@@ -66,6 +78,11 @@ export function statusToVariables(
 	vars.previous_title = prev?.track.title ?? ''
 	vars.previous_playlist = prev?.playlist.name ?? ''
 	vars.cued_title = status.cued?.title ?? ''
+	const page = validPage(status.padPage)
+	vars.pad_page_index = page ? page.index : ''
+	vars.pad_page_count = page ? page.count : ''
+	vars.pad_page_name = page ? page.name : ''
+	vars.pad_elsewhere_name = status.padPlayingElsewhere?.name ?? ''
 	for (const n of PAD_SLOTS) {
 		const pad = status.pads?.find((p) => p.slot === n)
 		vars[`pad_${n}_name`] = pad && !pad.empty ? pad.name : ''
@@ -86,6 +103,10 @@ export const Checks = {
 	repeatOne: (s: CuePlayerStatus | null): boolean => s?.repeat === true,
 	announcing: (s: CuePlayerStatus | null): boolean => s?.announcing === true,
 	outputProblem: (s: CuePlayerStatus | null): boolean => !!s?.output?.problem,
+	/** 지금 효과음 판이 n번째 (1부터) */
+	padPageIs: (s: CuePlayerStatus | null, page: number): boolean => validPage(s?.padPage)?.index === page,
+	/** 다른 판에서 효과음이 나오는 중 */
+	padElsewhere: (s: CuePlayerStatus | null): boolean => !!s?.padPlayingElsewhere?.name,
 	padPlaying: (s: CuePlayerStatus | null, slot: number): boolean =>
 		!!s?.pads?.some((p) => p.slot === slot && p.playing && !p.empty),
 	/** Only while sound is actually running (playing or fading) — a paused song is not "about to end". */

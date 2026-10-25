@@ -57,6 +57,12 @@ describe('request building', () => {
 		expect(withRequestId(undefined, () => 'x')).toEqual({ requestId: 'x' })
 	})
 
+	it('maps the pad page commands (CuePlayer 1.1.53 · 1.0.63~)', () => {
+		expect(Commands.padPageNext()).toEqual({ method: 'POST', path: '/pads/page/next', body: {} })
+		expect(Commands.padPagePrevious()).toEqual({ method: 'POST', path: '/pads/page/previous', body: {} })
+		expect(Commands.padPage(3)).toEqual({ method: 'PUT', path: '/pads/page', body: { page: 3 } })
+	})
+
 	it('maps every command to the v1 route', () => {
 		expect(Commands.go()).toEqual({ method: 'POST', path: '/transport/go', body: {} })
 		expect(Commands.go('p1', 't2')).toEqual({

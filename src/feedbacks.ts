@@ -16,6 +16,8 @@ export type FeedbacksSchema = {
 	stop_after: Bool<NoOptions>
 	repeat_one: Bool<NoOptions>
 	pad_playing: Bool<{ slot: number }>
+	pad_page_is: Bool<{ page: number }>
+	pad_elsewhere: Bool<NoOptions>
 	announcing: Bool<NoOptions>
 	remaining_below: Bool<{ seconds: number }>
 	connected: Bool<NoOptions>
@@ -36,6 +38,8 @@ export const FEEDBACK_GROUPS: Record<FeedbackGroup, FeedbackId[]> = {
 		'stop_after',
 		'repeat_one',
 		'pad_playing',
+		'pad_page_is',
+		'pad_elsewhere',
 		'announcing',
 		'connected',
 		'disconnected',
@@ -127,6 +131,20 @@ export function feedbackDefinitions(
 			options: [{ id: 'slot', type: 'dropdown', label: '칸', choices: PAD_CHOICES, default: 1 }],
 			callback: (fb) => Checks.padPlaying(status(), Number(fb.options.slot)),
 		},
+		pad_page_is: {
+			type: 'boolean',
+			name: '효과음 판이 N번째 · Pad page is',
+			description: '지금 효과음 판이 고른 번째(1부터)일 때 (판 고르기 버튼 불 켜기)',
+			defaultStyle: { bgcolor: Colors.brand, color: Colors.white },
+			options: [{ id: 'page', type: 'number', label: '판 (1부터)', default: 1, min: 1, max: 99, step: 1 }],
+			callback: (fb) => Checks.padPageIs(status(), Math.round(Number(fb.options.page))),
+		},
+		pad_elsewhere: simple(
+			'다른 판 효과음 나오는 중 · Pad playing on another page',
+			'판을 넘긴 뒤에도 앞 판의 효과음이 나오는 중일 때',
+			Checks.padElsewhere,
+			Colors.orange,
+		),
 		remaining_below: {
 			type: 'boolean',
 			name: '끝나기 N초 전 · Remaining below',

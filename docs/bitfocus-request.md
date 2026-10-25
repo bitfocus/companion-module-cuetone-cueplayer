@@ -69,4 +69,5 @@ Control CuePlayer playback, background audio mode, and sound-effect pads over it
   - 포털은 0.x 태그를 미리보기판(prerelease)으로만 받아서(체크 해제 불가) 기능 그대로 **1.0.0** 으로 올림. v1.0.0 CI(Companion Module Checks · Node CI) 통과.
   - 포털 Submit Version: **v1.0.0, 정식판, 검토 대기(Pending)**. 검토자 메시지에 0.1.4/0.1.5 는 제출 전 빌드라고 적음.
   - 검토 통과하면 Companion 모듈 목록에 '정식'으로 뜸. 다음 판(효과음 판 넘기기 액션 등)은 태그 → 포털 Submit Version 을 다시.
-- 남은 일: 효과음 칸이 큐플레이어는 10칸인데 모듈 동작·프리셋은 1~9 → 10번까지로 늘리기. 실물 Companion 으로 한 번 시험.
+- 2026-10-26 **1.1.0 준비 (lazalus 에만 push, bitfocus push · 태그 · 포털 제출은 아직)**: 효과음 판(큐플레이어 맥 1.1.53 · 윈도우 1.0.63~) — 동작 효과음 다음 판 · 앞 판 · 판 고르기(1부터), 변수 pad_page_index · pad_page_count · pad_page_name · pad_elsewhere_name, 피드백 '효과음 판이 N번째' · '다른 판 효과음 나오는 중', 프리셋 '효과음' 묶음에 앞 판 · 판 이름(누르면 다음 판) · 다음 판 줄, 옛 큐플레이어면 변수 비고 404 에 업데이트 안내. 1.0.0 검토가 끝나면 bitfocus push → v1.1.0 태그 → 포털 Submit Version.
+- 남은 일: 실물 Companion 으로 한 번 시험. (효과음 10칸은 이미 들어가 있음)

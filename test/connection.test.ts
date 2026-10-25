@@ -102,6 +102,25 @@ describe('CuePlayerConnection', () => {
 		expect(host.logs.some((l) => l.includes('5번 효과음 칸이 비어 있어요') && l.includes('not_found'))).toBe(true)
 	})
 
+	it('flips pad pages and explains 404 from an older CuePlayer', async () => {
+		const { m, host, conn } = await setup()
+		await until(() => host.link === 'ok')
+		await until(() => host.vars.pad_page_name === '기본')
+		expect(host.vars.pad_page_count).toBe(3)
+		expect(await conn.send(Commands.padPageNext(), '효과음 다음 판')).toBe(true)
+		expect(host.vars.pad_page_name).toBe('2부 레크리에이션')
+		expect(Checks.padPageIs(conn.status, 2)).toBe(true)
+		expect(await conn.send(Commands.padPagePrevious(), '효과음 앞 판')).toBe(true)
+		expect(await conn.send(Commands.padPagePrevious(), '효과음 앞 판')).toBe(true)
+		expect(host.vars.pad_page_index).toBe(3)
+		expect(await conn.send(Commands.padPage(1), '효과음 1번째 판')).toBe(true)
+		expect(host.vars.pad_page_name).toBe('기본')
+		expect(await conn.send(Commands.padPage(9), '효과음 9번째 판')).toBe(false)
+		m.mock.supportsPages = false
+		expect(await conn.send(Commands.padPageNext(), '효과음 다음 판')).toBe(false)
+		expect(host.logs.some((l) => l.includes('효과음 판은 큐플레이어 맥 1.1.53'))).toBe(true)
+	})
+
 	it('play/pause toggle on an empty player sends go (plays the cued song)', async () => {
 		const { m, host, conn } = await setup()
 		await until(() => host.link === 'ok')

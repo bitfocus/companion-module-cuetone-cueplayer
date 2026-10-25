@@ -116,6 +116,44 @@ describe('status → variables', () => {
 	})
 })
 
+describe('pad pages (CuePlayer 1.1.53 · 1.0.63~)', () => {
+	const paged: CuePlayerStatus = {
+		...playing,
+		padPage: { index: 2, count: 3, name: '2부 레크리에이션', names: ['기본', '2부 레크리에이션', '경품 추첨'] },
+		padPlayingElsewhere: { slot: 4, name: '팡파레' },
+	}
+
+	it('maps page index · count · name and a pad still sounding on another page', () => {
+		const v = statusToVariables(paged)
+		expect([v.pad_page_index, v.pad_page_count, v.pad_page_name, v.pad_elsewhere_name]).toEqual([
+			2,
+			3,
+			'2부 레크리에이션',
+			'팡파레',
+		])
+		expect(Checks.padPageIs(paged, 2)).toBe(true)
+		expect(Checks.padPageIs(paged, 1)).toBe(false)
+		expect(Checks.padElsewhere(paged)).toBe(true)
+	})
+
+	it('older CuePlayer (no padPage) or nonsense → empty, never a lit page key', () => {
+		const v = statusToVariables(playing)
+		expect([v.pad_page_index, v.pad_page_count, v.pad_page_name, v.pad_elsewhere_name]).toEqual(['', '', '', ''])
+		expect(Checks.padPageIs(playing, 1)).toBe(false)
+		expect(Checks.padElsewhere(playing)).toBe(false)
+		const bad = { ...playing, padPage: { index: 5, count: 3, name: 'x' } }
+		expect(statusToVariables(bad).pad_page_index).toBe('')
+		expect(Checks.padPageIs(bad, 5)).toBe(false)
+	})
+
+	it('disconnected keeps the page name (like pad names) but not the other-page pad', () => {
+		const prev = statusToVariables(paged)
+		const v = statusToVariables(null, prev)
+		expect([v.pad_page_index, v.pad_page_name, v.pad_elsewhere_name]).toEqual([2, '2부 레크리에이션', ''])
+		expect(Checks.padPageIs(null, 2)).toBe(false)
+	})
+})
+
 describe('feedback checks', () => {
 	it('reflect the status', () => {
 		expect(Checks.playing(playing)).toBe(true)

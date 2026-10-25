@@ -278,4 +278,9 @@ export const Commands = {
 	padTrigger: (slot: number): ApiRequest => ({ method: 'POST', path: `/pads/${slot}/trigger`, body: {} }),
 	padStop: (slot: number): ApiRequest => ({ method: 'POST', path: `/pads/${slot}/stop`, body: {} }),
 	padsStop: (): ApiRequest => ({ method: 'POST', path: '/pads/stop', body: {} }),
+	/** 효과음 판 넘기기 (끝에서 넘기면 처음으로, CuePlayer 맥 1.1.53 · 윈도우 1.0.63~) */
+	padPageNext: (): ApiRequest => ({ method: 'POST', path: '/pads/page/next', body: {} }),
+	padPagePrevious: (): ApiRequest => ({ method: 'POST', path: '/pads/page/previous', body: {} }),
+	/** n번째 판 (1부터, 없으면 404) */
+	padPage: (page: number): ApiRequest => ({ method: 'PUT', path: '/pads/page', body: { page } }),
 }
