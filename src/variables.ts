@@ -21,11 +21,11 @@ export type VariablesSchema = {
 	previous_title: string
 	previous_playlist: string
 	cued_title: string
-	/** 지금 효과음 판 (1부터, 옛 CuePlayer 면 '') */
+	/** 지금 효과음 뱅크 (1부터, 옛 CuePlayer 면 ''). 변수 이름은 예전 page 그대로 */
 	pad_page_index: number | string
 	pad_page_count: number | string
 	pad_page_name: string
-	/** 판을 넘긴 뒤에도 다른 판에서 나오는 효과음 이름 (없으면 '') */
+	/** 뱅크를 넘긴 뒤에도 다른 뱅크에서 나오는 효과음 이름 (없으면 '') */
 	pad_elsewhere_name: string
 } & PadNameVariables
 
@@ -42,10 +42,12 @@ export function variableDefinitions(): CompanionVariableDefinitions<VariablesSch
 		previous_title: { name: '이전 곡 제목 (⏮ 로 돌아갈 곡, 첫 곡이면 비어 있음)' },
 		previous_playlist: { name: '이전 곡의 목록 이름' },
 		cued_title: { name: '올려 둔(대기) 곡 제목' },
-		pad_page_index: { name: '지금 효과음 판 번호 (1부터)' },
-		pad_page_count: { name: '효과음 판 수' },
-		pad_page_name: { name: '지금 효과음 판 이름' },
-		pad_elsewhere_name: { name: '다른 판에서 나오는 효과음 이름 (판을 넘긴 뒤, 없으면 빈칸)' },
+		pad_page_index: { name: '지금 효과음 뱅크 번호 (1부터) · Pad bank number' },
+		pad_page_count: { name: '효과음 뱅크 수 · Pad bank count' },
+		pad_page_name: { name: '지금 효과음 뱅크 이름 · Pad bank name' },
+		pad_elsewhere_name: {
+			name: '다른 뱅크에서 나오는 효과음 이름 (뱅크를 넘긴 뒤, 없으면 빈칸) · Pad playing on another bank',
+		},
 	}
 	for (let n = 1; n <= 10; n++) defs[`pad_${n}_name`] = { name: `효과음 ${n}번 칸 이름` }
 	return defs as CompanionVariableDefinitions<VariablesSchema>

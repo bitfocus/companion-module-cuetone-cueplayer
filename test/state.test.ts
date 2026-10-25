@@ -116,7 +116,7 @@ describe('status → variables', () => {
 	})
 })
 
-describe('pad pages (CuePlayer 1.1.53 · 1.0.63~)', () => {
+describe('pad banks (CuePlayer 1.1.53 · 1.0.63~, API name padPage)', () => {
 	const paged: CuePlayerStatus = {
 		...playing,
 		padPage: { index: 2, count: 3, name: '2부 레크리에이션', names: ['기본', '2부 레크리에이션', '경품 추첨'] },

@@ -43,7 +43,7 @@ export class MockCuePlayer {
 		this.enabled = enabled
 		this.playlists = defaultLibrary()
 		this.pads = defaultPads()
-		/** 효과음 판 (CuePlayer 맥 1.1.53 · 윈도우 1.0.63~). false = 옛 앱 (판 없음, 판 경로 404) */
+		/** 효과음 뱅크 (CuePlayer 맥 1.1.53 · 윈도우 1.0.63~). false = 옛 앱 (뱅크 없음, /pads/page 경로 404) */
 		this.supportsPages = true
 		this.pageNames = ['기본', '2부 레크리에이션', '경품 추첨']
 		this.pageIndex = 0
@@ -325,7 +325,7 @@ export class MockCuePlayer {
 				if (m !== 'PUT') return err(405, 'method_not_allowed', '메서드가 달라요')
 				const page = body.page
 				if (!Number.isInteger(page) || page < 1) return bad('page(1부터)가 필요해요')
-				if (page > this.pageNames.length) return err(404, 'not_found', `${page}번째 효과음 판이 없어요`)
+				if (page > this.pageNames.length) return err(404, 'not_found', `${page}번째 효과음 뱅크가 없어요`)
 				this.pageIndex = page - 1
 				return ok()
 			}

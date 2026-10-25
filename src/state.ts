@@ -53,7 +53,7 @@ export function statusToVariables(
 		vars.previous_title = ''
 		vars.previous_playlist = ''
 		vars.cued_title = ''
-		// 판 이름도 칸 이름처럼 마지막 값을 남김 (버튼이 무슨 판인지 계속 보이게)
+		// 뱅크 이름도 칸 이름처럼 마지막 값을 남김 (버튼이 무슨 뱅크인지 계속 보이게)
 		vars.pad_page_index = previous?.pad_page_index ?? ''
 		vars.pad_page_count = previous?.pad_page_count ?? ''
 		vars.pad_page_name = previous?.pad_page_name ?? ''
@@ -103,9 +103,9 @@ export const Checks = {
 	repeatOne: (s: CuePlayerStatus | null): boolean => s?.repeat === true,
 	announcing: (s: CuePlayerStatus | null): boolean => s?.announcing === true,
 	outputProblem: (s: CuePlayerStatus | null): boolean => !!s?.output?.problem,
-	/** 지금 효과음 판이 n번째 (1부터) */
+	/** 지금 효과음 뱅크가 n번째 (1부터) */
 	padPageIs: (s: CuePlayerStatus | null, page: number): boolean => validPage(s?.padPage)?.index === page,
-	/** 다른 판에서 효과음이 나오는 중 */
+	/** 다른 뱅크에서 효과음이 나오는 중 */
 	padElsewhere: (s: CuePlayerStatus | null): boolean => !!s?.padPlayingElsewhere?.name,
 	padPlaying: (s: CuePlayerStatus | null, slot: number): boolean =>
 		!!s?.pads?.some((p) => p.slot === slot && p.playing && !p.empty),

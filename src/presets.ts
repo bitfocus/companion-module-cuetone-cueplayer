@@ -151,16 +151,16 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 	p.skip_back = key('10초 뒤로', '10초 뒤로', [{ actionId: 'skip', options: { by: -10 } }], [], icon(Icons.back10))
 	p.skip_fwd = key('10초 앞으로', '10초 앞으로', [{ actionId: 'skip', options: { by: 10 } }], [], icon(Icons.fwd10))
 	p.pad_page_previous = {
-		...key('효과음 앞 판', '앞 판', [{ actionId: 'pad_page_previous', options: {} }], [], icon(Icons.page_prev)),
-		keywords: ['pad', 'page', '판', '효과음'],
+		...key('효과음 앞 뱅크', '앞 뱅크', [{ actionId: 'pad_page_previous', options: {} }], [], icon(Icons.page_prev)),
+		keywords: ['pad', 'bank', '뱅크', 'page', '효과음'],
 	}
 	p.pad_page_next = {
-		...key('효과음 다음 판', '다음 판', [{ actionId: 'pad_page_next', options: {} }], [], icon(Icons.page_next)),
-		keywords: ['pad', 'page', '판', '효과음'],
+		...key('효과음 다음 뱅크', '다음 뱅크', [{ actionId: 'pad_page_next', options: {} }], [], icon(Icons.page_next)),
+		keywords: ['pad', 'bank', '뱅크', 'page', '효과음'],
 	}
 	p.pad_page_name = {
 		...key(
-			'효과음 판 이름 (누르면 다음 판)',
+			'효과음 뱅크 이름 (누르면 다음 뱅크)',
 			`${V('pad_page_index')}/${V('pad_page_count')} ${V('pad_page_name')}`,
 			[{ actionId: 'pad_page_next', options: {} }],
 			[
@@ -173,7 +173,7 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 			icon(Icons.page),
 		),
 		previewStyle: { text: '1/3 1부 시상식', ...icon(Icons.page) },
-		keywords: ['pad', 'page', '판', '효과음'],
+		keywords: ['pad', 'bank', '뱅크', 'page', '효과음'],
 	}
 	p.pads_stop = key(
 		'효과음 전부 멈춤',
@@ -267,7 +267,7 @@ export function presetDefinitions(): { structure: CompanionPresetSection<ModuleS
 				{
 					id: 'pad_pages',
 					type: 'simple',
-					name: '효과음 판 · 앞 판 · 판 이름 · 다음 판',
+					name: '효과음 뱅크 · 앞 뱅크 · 뱅크 이름 · 다음 뱅크 · Pad bank',
 					presets: ['pad_page_previous', 'pad_page_name', 'pad_page_next'],
 				},
 			],

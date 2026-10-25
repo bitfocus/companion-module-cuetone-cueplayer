@@ -18,13 +18,13 @@
 
 ### 동작 (Actions)
 
-곡 재생(처음부터, 목록에서 곡 고르기 · 앱에서 고른 곡 · ID 직접 입력), 재생/일시정지(재생 중이면 일시정지, 아니면 이어서), 일시정지, 이어서 재생, 즉시 정지(그 곡 처음 자리), 처음부터, 페이드 정지(그 곡 처음 자리), 다음 곡, 이전 곡, 위치로 이동(초), 앞뒤로 건너뛰기(±초), 보이스오버(켜기/끄기/바꾸기), 끝나면 정지(켜기/끄기/바꾸기), 한 곡 반복(켜기/끄기/바꾸기 — 10-21 이후 CuePlayer), 효과음 1~10 울리기, 효과음 칸 멈춤, 효과음 전부 멈춤, 효과음 다음 판 · 앞 판 · 판 고르기(1부터 — 큐플레이어 맥 1.1.53 · 윈도우 1.0.63 이상).
+곡 재생(처음부터, 목록에서 곡 고르기 · 앱에서 고른 곡 · ID 직접 입력), 재생/일시정지(재생 중이면 일시정지, 아니면 이어서), 일시정지, 이어서 재생, 즉시 정지(그 곡 처음 자리), 처음부터, 페이드 정지(그 곡 처음 자리), 다음 곡, 이전 곡, 위치로 이동(초), 앞뒤로 건너뛰기(±초), 보이스오버(켜기/끄기/바꾸기), 끝나면 정지(켜기/끄기/바꾸기), 한 곡 반복(켜기/끄기/바꾸기 — 10-21 이후 CuePlayer), 효과음 1~10 울리기, 효과음 칸 멈춤, 효과음 전부 멈춤, 효과음 다음 뱅크 · 앞 뱅크 · 뱅크 고르기(1부터 — 큐플레이어 맥 1.1.53 · 윈도우 1.0.63 이상).
 
 곡 목록은 연결될 때, 30초마다, 지금 목록이 바뀔 때 다시 불러와요. 바꾸는 명령에는 매번 새 `requestId` 가 붙어 재시도로 두 번 울리지 않아요.
 
 ### 피드백 (Feedbacks)
 
-재생 중 · 일시정지 · 페이드 중 · 멈춤(곡 없음) · 보이스오버 켜짐 · 끝나면 정지 켜짐 · 한 곡 반복 켜짐 · 효과음 N 울리는 중 · 효과음 판이 N번째 · 다른 판 효과음 나오는 중 · 방송 중 · 끝나기 N초 전 · 연결됨 · 연결 끊김 · 출력 장치 문제.
+재생 중 · 일시정지 · 페이드 중 · 멈춤(곡 없음) · 보이스오버 켜짐 · 끝나면 정지 켜짐 · 한 곡 반복 켜짐 · 효과음 N 울리는 중 · 효과음 뱅크가 N번째 · 다른 뱅크 효과음 나오는 중 · 방송 중 · 끝나기 N초 전 · 연결됨 · 연결 끊김 · 출력 장치 문제.
 연결이 끊기면 모든 상태 피드백이 꺼지고 '연결 끊김'만 켜져요 — 마지막 초록색이 남지 않아요.
 
 ### 변수 (Variables)
@@ -39,9 +39,9 @@
 | `previous_title` / `previous_playlist`     | 이전 곡 (⏮ 로 돌아갈 곡) / 그 곡의 목록 이름                          |
 | `cued_title`                               | 올려 둔(대기) 곡                                                      |
 | `pad_1_name`, `pad_2_name` … `pad_10_name` | 효과음 1~10번 칸 이름 (`pad_` + 칸 번호 + `_name`, 빈 칸은 비어 있음) |
-| `pad_page_index` / `pad_page_count`        | 지금 효과음 판 번호 (1부터) / 판 수 (옛 큐플레이어면 비어 있음)       |
-| `pad_page_name`                            | 지금 효과음 판 이름                                                   |
-| `pad_elsewhere_name`                       | 판을 넘긴 뒤에도 앞 판에서 나오는 효과음 이름 (없으면 비어 있음)      |
+| `pad_page_index` / `pad_page_count`        | 지금 효과음 뱅크 번호 (1부터) / 뱅크 수 (옛 큐플레이어면 비어 있음)   |
+| `pad_page_name`                            | 지금 효과음 뱅크 이름                                                 |
+| `pad_elsewhere_name`                       | 뱅크를 넘긴 뒤에도 앞 뱅크에서 나오는 효과음 이름 (없으면 비어 있음)  |
 
 쓸 때는 `$(cueplayer:previous_title)`, `$(cueplayer:pad_3_name)` 처럼 써요. 앞의 `cueplayer` 는 연결 이름에 따라 바뀌어요.
 
@@ -57,7 +57,7 @@
 
 재생 키: 곡 끝에서 다음 곡과 겹치는 동안에도 끝나 가는 곡의 남은 시간을 끝까지 보여 줘요. 재생 중 초록 → 끝나기 30초 전 주황 → 10초 전 빨강, 일시정지 노랑, 페이드 보라, 끊기면 회색. 효과음 키는 칸 이름을 보여 주고 울리는 동안 주황.
 효과음 9·10번·효과음 전부 멈춤·이전 곡(이전 곡 제목 표시)·±10초·지금 곡 표시는 "효과음", "더 보기" 묶음에 있어요.
-"효과음" 묶음의 **효과음 판** 줄: 앞 판 · 판 이름(누르면 다음 판, 판을 넘긴 뒤 앞 판 효과음이 나오는 동안 주황) · 다음 판. 판을 넘기면 효과음 1~10 키 이름도 그 판으로 바뀌어요. 판은 큐플레이어 맥 1.1.53 · 윈도우 1.0.63 이상에서 돼요.
+"효과음" 묶음의 **효과음 뱅크** 줄: 앞 뱅크 · 뱅크 이름(누르면 다음 뱅크, 뱅크를 넘긴 뒤 앞 뱅크 효과음이 나오는 동안 주황) · 다음 뱅크. 뱅크를 넘기면 효과음 1~10 키 이름도 그 뱅크로 바뀌어요. 뱅크는 큐플레이어 맥 1.1.53 · 윈도우 1.0.63 이상에서 돼요. (변수 이름 `pad_page_*` 는 예전 이름 그대로)
 
 ### 안 될 때
 
@@ -76,9 +76,9 @@ Controls CueTone **CuePlayer** (event music player) through its HTTP remote API 
 2. Same computer: keep host `127.0.0.1`, port `53100`, no token needed.
 3. Another computer: set CuePlayer to accept the same network, then enter that computer's IP and the **token** shown in CuePlayer. The token itself is never sent over the network — every request is signed with it (HMAC, CuePlayer Mac 1.1.43 / Windows 1.0.49 or newer).
 
-Actions cover go (pick a song from the playlist dropdown), play/pause toggle, pause, resume, stop, restart, fade stop, next, previous, seek, skip ±s, voice-over and stop-after-this-track (on/off/toggle), sound pads 1–10 trigger/stop and stop all, and pad pages (next, previous, go to page N; CuePlayer Mac 1.1.53 / Windows 1.0.63 or later). Feedbacks show playing, paused, fading, stopped, voice-over, stop-after-this-track, pad playing, pad page is N, a pad still sounding on another page, announcing, remaining below N s, connected/disconnected and output problems; when the connection drops every state feedback turns off. A ready 15-key Stream Deck page is included in the presets; the "Previous" key in "More" shows the previous song's title, like "Next" shows the next one.
+Actions cover go (pick a song from the playlist dropdown), play/pause toggle, pause, resume, stop, restart, fade stop, next, previous, seek, skip ±s, voice-over and stop-after-this-track (on/off/toggle), sound pads 1–10 trigger/stop and stop all, and pad banks (next, previous, go to bank N; CuePlayer Mac 1.1.53 / Windows 1.0.63 or later). Feedbacks show playing, paused, fading, stopped, voice-over, stop-after-this-track, pad playing, pad bank is N, a pad still sounding on another bank, announcing, remaining below N s, connected/disconnected and output problems; when the connection drops every state feedback turns off. A ready 15-key Stream Deck page is included in the presets; the "Previous" key in "More" shows the previous song's title, like "Next" shows the next one.
 
 Variables (use as `$(cueplayer:name)`; `cueplayer` is your connection label):
-`state`, `state_label`, `current_title`, `current_playlist`, `remaining` (m:ss), `remaining_seconds`, `elapsed`, `next_title`, `previous_title`, `previous_playlist`, `cued_title`, one per sound pad: `pad_1_name`, `pad_2_name` … `pad_10_name` (`pad_` + slot number + `_name`, empty for an empty slot), and the pad page: `pad_page_index`, `pad_page_count`, `pad_page_name`, `pad_elsewhere_name` (empty with older CuePlayer).
+`state`, `state_label`, `current_title`, `current_playlist`, `remaining` (m:ss), `remaining_seconds`, `elapsed`, `next_title`, `previous_title`, `previous_playlist`, `cued_title`, one per sound pad: `pad_1_name`, `pad_2_name` … `pad_10_name` (`pad_` + slot number + `_name`, empty for an empty slot), and the pad bank: `pad_page_index`, `pad_page_count`, `pad_page_name`, `pad_elsewhere_name` (empty with older CuePlayer; the variable names keep the old word "page").
 
 `previous_title` is the song CuePlayer's ⏮ goes back to: the one before the current song in its playlist (songs with a missing file are skipped). It is empty at the first song or when nothing is loaded. The list is re-read on every song change, so reordering it during the show is picked up. (Like the app, ⏮ first jumps to the start of the current song when it has played for more than 3 s.)
