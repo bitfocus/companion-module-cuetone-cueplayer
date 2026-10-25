@@ -21,6 +21,7 @@ CuePlayer for macOS and Windows
 Control CuePlayer playback, background audio mode, and sound-effect pads over its HTTP API.
 
 **Longer description or notes to reviewers**
+
 > We are CueTone, the developer of CuePlayer and this module. CuePlayer is a free music playback application for live events on macOS and Windows.
 >
 > The module uses CuePlayer’s HTTP API v1, planned for the next CuePlayer releases: macOS 1.1.21 and Windows 1.0.24. These API-enabled releases are not yet available. API documentation is provided in the module’s HELP.md and our website manual.
@@ -32,7 +33,6 @@ Control CuePlayer playback, background audio mode, and sound-effect pads over it
 > It is written in TypeScript using companion-module-template-ts and is MIT-licensed. It passes companion-module-check and 37 tests against a mock server. It uses @companion-module/base ~2.1 and requires Companion 5.0 or later.
 >
 > CueTone will maintain the module. Contact: hello@cuetone.cc. GitHub: lazalus.
-
 
 ## 검토 메모 (Astra)
 
@@ -62,4 +62,11 @@ Control CuePlayer playback, background audio mode, and sound-effect pads over it
 
 - 2026-10-14 큐플레이어 맥 1.1.21 · 윈도우 1.0.24 배포 뒤 제출 → https://developer.bitfocus.io/create-repository/17 (Pending). GitHub lazalus 로 로그인, 포털 이용약관 동의.
 - 승인되면 GitHub 초대 수락 → 이 저장소 push → `v0.1.0` 태그 → 포털 Submit Version.
+- 2026-10-26 저장소 요청 승인 → 진행:
+  - 초대 수락(bitfocus-developer-portal 봇, 초대 339612386) → https://github.com/bitfocus/companion-module-cuetone-cueplayer (공개, 포털 템플릿 첫 커밋 61da67f 하나).
+  - 템플릿 커밋을 `git merge -s ours`로 이력에만 합치고(내용은 이 모듈 그대로, 강제 push 없음) main push. 이후 이 저장소는 origin(lazalus)과 bitfocus 두 곳에 같이 push.
+  - v0.1.4 태그는 Bitfocus CI(`yarn install --immutable`)가 yarn.lock 불일치로 실패. 태그는 저장소 규칙상 지울 수 없음 → yarn.lock 맞춰 0.1.5.
+  - 포털은 0.x 태그를 미리보기판(prerelease)으로만 받아서(체크 해제 불가) 기능 그대로 **1.0.0** 으로 올림. v1.0.0 CI(Companion Module Checks · Node CI) 통과.
+  - 포털 Submit Version: **v1.0.0, 정식판, 검토 대기(Pending)**. 검토자 메시지에 0.1.4/0.1.5 는 제출 전 빌드라고 적음.
+  - 검토 통과하면 Companion 모듈 목록에 '정식'으로 뜸. 다음 판(효과음 판 넘기기 액션 등)은 태그 → 포털 Submit Version 을 다시.
 - 남은 일: 효과음 칸이 큐플레이어는 10칸인데 모듈 동작·프리셋은 1~9 → 10번까지로 늘리기. 실물 Companion 으로 한 번 시험.
